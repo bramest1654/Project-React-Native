@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React from "react";
 import {
   View,
   Text,
@@ -7,53 +7,14 @@ import {
   StyleSheet,
   SafeAreaView,
 } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useFocusEffect } from "@react-navigation/native";
 import BrandHeader from "../components/BrandHeader";
-import LoadingState from "../components/LoadingState";
 import { useApp } from "../navigation/AppNavigator";
 import { formatRupiah } from "../utils/pricing";
-import { contactAdmin } from "../services/contactService";
 
-/**
- * Status screen — displays saved bookings (History) from AsyncStorage.
- * Sesi 9: AsyncStorage read (Array JSON)
- */
 export default function StatusScreen({ navigation }) {
-  const { theme } = useApp();
+  const { theme, booking } = useApp();
   const styles = getStyles(theme);
-  const [history, setHistory] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  const loadHistory = useCallback(() => {
-    setLoading(true);
-    AsyncStorage.getItem("anterin-history")
-      .then((stored) => {
-        if (stored) {
-          setHistory(JSON.parse(stored));
-        }
-      })
-      .catch(() => {})
-      .finally(() => setLoading(false));
-  }, []);
-
-  // Reload when tab is focused
-  useFocusEffect(
-    useCallback(() => {
-      loadHistory();
-    }, [loadHistory]),
-  );
-
-  if (loading) {
-    return (
-      <SafeAreaView style={styles.container}>
-        <View style={styles.content}>
-          <BrandHeader navigation={navigation} title="STATUS" />
-          <LoadingState message="Memuat riwayat booking..." />
-        </View>
-      </SafeAreaView>
-    );
-  }
+  const history = booking ? [booking] : [];
 
   return (
     <SafeAreaView style={styles.container}>
@@ -106,17 +67,6 @@ export default function StatusScreen({ navigation }) {
               </View>
 
               <View style={styles.actionRow}>
-                {index === 0 && (
-                  <Pressable
-                    style={({ pressed }) => [
-                      styles.primaryButton,
-                      pressed && styles.pressed,
-                    ]}
-                    onPress={() => contactAdmin()}
-                  >
-                    <Text style={styles.primaryText}>Chat Admin ↗</Text>
-                  </Pressable>
-                )}
                 <Pressable
                   style={({ pressed }) => [
                     styles.outlineButton,

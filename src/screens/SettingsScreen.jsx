@@ -23,11 +23,7 @@ export default function SettingsScreen({ navigation }) {
       <ScrollView contentContainerStyle={styles.content}>
         <BrandHeader navigation={navigation} title="PENGATURAN" />
 
-        <GlassCard
-          style={styles.card}
-          intensity={isDarkMode ? 30 : 60}
-          tint={isDarkMode ? "dark" : "light"}
-        >
+        <GlassCard style={styles.card}>
           <Text style={styles.eyebrow}>PREFERENSI APLIKASI</Text>
 
           <View style={styles.settingRow}>

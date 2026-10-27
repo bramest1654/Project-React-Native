@@ -18,7 +18,7 @@ npx expo start --ios
 npx expo start --android
 ```
 
-## Mapping Fitur Terhadap Sesi React Native (1-13)
+## Mapping Fitur Terhadap Sesi React Native (1-7)
 
 Project ini dirancang sebagai prototype venture creation sekaligus implementasi materi React Native:
 
@@ -41,30 +41,5 @@ Project ini dirancang sebagai prototype venture creation sekaligus implementasi 
 
 6. **Sesi 7 (Pressable, onPress, Interaksi)**
    - Implementasi pada: Seluruh tombol dengan efek visual `opacity` saat ditekan.
-
-7. **Sesi 8 (Animated API)**
-   - Implementasi pada: Animasi fade-in dan slide-up di `HomeScreen.jsx`.
-
-8. **Sesi 9 (AsyncStorage)**
-   - Implementasi pada: Penyimpanan otomatis draft form dan status booking aktif di `BookingScreen.jsx`.
-
-9. **Sesi 10 (Lokasi, Permissions)**
-   - Implementasi pada: `LocationScreen.jsx` (dengan fallback UI jika tidak didukung Expo Go).
-
-10. **Sesi 11 (Fetch, Mock API)**
-    - Implementasi pada: `src/services/availabilityService.js` dan integrasi simulasi di `AvailabilityCard.jsx`.
-
-11. **Sesi 12 (Testing dengan Jest)**
-    - Implementasi pada: `__tests__/` untuk kalkulasi harga dan validasi form.
-
-12. **Sesi 13 (Deployment Expo)**
-    - Menggunakan build commands Expo modern (`npx expo`) dan siap untuk `eas build`.
-
-## Expo Go vs Development Build
-
-- **Expo Go**: Cocok untuk testing komponen UI standar dan JS murni. MapView mungkin terbatas.
-- **Development Build**: Diperlukan saat project menambahkan native module (seperti peta lengkap) via EAS.
-- **APK/AAB/IPA**: Adalah production bundle yang dibuat dengan `eas build`.
-
 
 AI digunakan sebagai assistant untuk penjelasan konsep dan review kode

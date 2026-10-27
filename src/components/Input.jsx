@@ -2,11 +2,6 @@ import React from "react";
 import { View, Text, TextInput, StyleSheet } from "react-native";
 import { useTheme } from "../navigation/AppNavigator";
 
-/**
- * Reusable Input komponen — pola dari materi "Collecting Data".
- * Menerima semua props TextInput (termasuk secureTextEntry, onChangeText, dll.)
- * dan menampilkan label di atasnya.
- */
 function Input(props) {
   const theme = useTheme();
   const styles = getStyles(theme);

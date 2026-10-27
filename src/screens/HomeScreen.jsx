@@ -1,18 +1,13 @@
-import React, { useRef, useEffect, useState } from "react";
+import React from "react";
 
 import {
   View,
   Text,
   ScrollView,
   Pressable,
-  Animated,
   StyleSheet,
   Image,
-  Platform,
-  Dimensions,
 } from "react-native";
-import { BlurView } from "expo-blur";
-import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native";
 import BrandHeader from "../components/BrandHeader";
 import GlassCard from "../components/GlassCard";
@@ -21,28 +16,9 @@ import DriverCard from "../components/DriverCard";
 import drivers from "../data/drivers";
 import { useApp } from "../navigation/AppNavigator";
 
-const { width } = Dimensions.get("window");
-
 export default function HomeScreen({ navigation }) {
   const { theme, packages, selectedPackage, setSelectedPackage } = useApp();
   const styles = getStyles(theme);
-  const fadeAnim = useRef(new Animated.Value(0)).current;
-  const slideAnim = useRef(new Animated.Value(30)).current;
-
-  useEffect(() => {
-    Animated.parallel([
-      Animated.timing(fadeAnim, {
-        toValue: 1,
-        duration: 700,
-        useNativeDriver: true,
-      }),
-      Animated.timing(slideAnim, {
-        toValue: 0,
-        duration: 700,
-        useNativeDriver: true,
-      }),
-    ]).start();
-  }, []);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -52,24 +28,15 @@ export default function HomeScreen({ navigation }) {
       >
         <BrandHeader navigation={navigation} title="" />
 
-        <Animated.View
-          style={{ opacity: fadeAnim, transform: [{ translateY: slideAnim }] }}
-        >
-          {/* Hero image with glass overlay on top */}
+        <View>
           <View style={styles.heroImageContainer}>
             <Image
               source={require("../../assets/hero_zenix_transparent.png")}
               style={styles.heroImage}
               resizeMode="cover"
             />
-            {/* Gradient overlay bottom */}
-            <LinearGradient
-              colors={["transparent", "rgba(244,241,236,0.95)"]}
-              style={styles.heroGradient}
-            />
           </View>
 
-          {/* Car model badge */}
           <View style={styles.carBadgeWrap}>
             <View style={styles.carBadge}>
               <Text style={styles.carBadgeIcon}>🚕</Text>
@@ -78,7 +45,6 @@ export default function HomeScreen({ navigation }) {
               </Text>
             </View>
 
-            {/* 12 jam and 6 pax info cards */}
             <View style={styles.infoCardsRow}>
               <View
                 style={[styles.infoCardSolid, { backgroundColor: theme.navy }]}
@@ -103,7 +69,6 @@ export default function HomeScreen({ navigation }) {
             </View>
           </View>
 
-          {/* Eyebrow + headline */}
           <Text style={styles.eyebrow}>PREMIUM TRANSPORT · SEMARANG</Text>
           <Text style={styles.heroTitle}>
             Duduk tenang,{"\n"}kami{" "}
@@ -123,9 +88,8 @@ export default function HomeScreen({ navigation }) {
           >
             <Text style={styles.primaryText}>Jadwalkan perjalanan →</Text>
           </Pressable>
-        </Animated.View>
+        </View>
 
-        {/* Glass feature strip */}
         <View style={styles.featureRow}>
           {[
             {
@@ -144,12 +108,7 @@ export default function HomeScreen({ navigation }) {
               desc: "Bisnis, wisata, event, VIP.",
             },
           ].map((f) => (
-            <GlassCard
-              key={f.num}
-              style={styles.featureCard}
-              intensity={50}
-              tint="light"
-            >
+            <GlassCard key={f.num} style={styles.featureCard}>
               <Text style={styles.goldMono}>{f.num}</Text>
               <Text style={styles.featureTitle}>{f.title}</Text>
               <Text style={styles.smallText}>{f.desc}</Text>
@@ -157,7 +116,6 @@ export default function HomeScreen({ navigation }) {
           ))}
         </View>
 
-        {/* Fleet Advantages Section */}
         <View style={styles.fleetSection}>
           <Text style={styles.eyebrow}>ARMADA KAMI</Text>
           <Text style={styles.sectionTitle}>
@@ -202,7 +160,6 @@ export default function HomeScreen({ navigation }) {
           </ScrollView>
         </View>
 
-        {/* Why Choose Anterin Section */}
         <View style={styles.reasonsSection}>
           <Text style={styles.eyebrow}>ALASAN MEMILIH KAMI</Text>
           <Text style={styles.sectionTitle}>
@@ -242,7 +199,6 @@ export default function HomeScreen({ navigation }) {
           </View>
         </View>
 
-        {/* --- SERVICES SECTION MERGED --- */}
         <View style={styles.servicesContainer}>
           <Text style={styles.eyebrow}>PILIHAN PAKET</Text>
           <Text style={styles.sectionTitle}>
@@ -262,7 +218,6 @@ export default function HomeScreen({ navigation }) {
             />
           ))}
 
-          {/* Vehicle info */}
           <View style={styles.darkBand}>
             <Text style={styles.darkTitle}>
               Satu kabin, banyak kemungkinan.
@@ -282,9 +237,8 @@ export default function HomeScreen({ navigation }) {
             </View>
           </View>
 
-          {/* Included / not included */}
           <View style={styles.section}>
-            <GlassCard style={styles.infoCard} intensity={40} tint="light">
+            <GlassCard style={styles.infoCard}>
               <Text style={styles.eyebrow}>SUDAH TERMASUK</Text>
               <Text style={styles.sectionTitle}>
                 Yang membuat perjalanan ringan
@@ -303,7 +257,7 @@ export default function HomeScreen({ navigation }) {
           </View>
 
           <View style={styles.section}>
-            <GlassCard style={styles.infoCard} intensity={40} tint="light">
+            <GlassCard style={styles.infoCard}>
               <Text style={styles.eyebrow}>PERLU DIPERHATIKAN</Text>
               <Text style={styles.sectionTitle}>Biaya di luar paket</Text>
               {[
@@ -319,7 +273,6 @@ export default function HomeScreen({ navigation }) {
             </GlassCard>
           </View>
 
-          {/* Driver profiles */}
           <View style={styles.section}>
             <Text style={styles.eyebrow}>TIM DRIVER ANTERIN</Text>
             <Text style={styles.sectionTitle}>
@@ -344,7 +297,6 @@ const getStyles = (theme) =>
     container: { flex: 1, backgroundColor: theme.paper },
     content: { paddingBottom: 160 },
 
-    // Hero image
     heroImageContainer: {
       marginHorizontal: 16,
       marginBottom: 24,
@@ -353,10 +305,6 @@ const getStyles = (theme) =>
       height: 260,
     },
     heroImage: { width: "100%", height: "100%" },
-    heroGradient: {
-      ...StyleSheet.absoluteFillObject,
-      top: "50%",
-    },
     statRow: {
       position: "absolute",
       bottom: 16,
@@ -385,7 +333,6 @@ const getStyles = (theme) =>
     statNumber: { color: theme.text, fontSize: 16, fontWeight: "800" },
     statLabel: { color: theme.muted, fontSize: 10, marginTop: 1 },
 
-    // Car badge
     carBadgeWrap: {
       alignItems: "center",
       marginTop: -40,
@@ -426,7 +373,6 @@ const getStyles = (theme) =>
     infoCardNum: { fontSize: 16, fontWeight: "900", marginBottom: 2 },
     infoCardLabel: { fontSize: 10, fontWeight: "700" },
 
-    // Copy
     eyebrow: {
       color: theme.gold,
       fontSize: 10,
@@ -464,7 +410,6 @@ const getStyles = (theme) =>
     primaryText: { color: theme.white, fontSize: 13, fontWeight: "800" },
     pressed: { opacity: 0.7 },
 
-    // Glass feature strip
     featureRow: {
       flexDirection: "row",
       gap: 10,
@@ -485,7 +430,6 @@ const getStyles = (theme) =>
     featureTitle: { color: theme.text, fontSize: 11, fontWeight: "800" },
     smallText: { color: theme.muted, fontSize: 10, lineHeight: 15 },
 
-    // Services merged
     servicesContainer: {
       paddingHorizontal: 22,
       paddingTop: 10,
@@ -511,7 +455,6 @@ const getStyles = (theme) =>
     infoCard: { padding: 20, marginVertical: 8 },
     listItem: { color: theme.muted, fontSize: 13, marginBottom: 8 },
 
-    // CTA
     ctaSection: { paddingHorizontal: 16, paddingVertical: 20 },
     ctaCard: { padding: 24 },
     sectionTitle: {
@@ -532,7 +475,6 @@ const getStyles = (theme) =>
     },
     outlineText: { color: theme.text, fontSize: 12, fontWeight: "800" },
 
-    // Reasons Section
     reasonsSection: {
       paddingHorizontal: 22,
       paddingTop: 10,
@@ -573,7 +515,6 @@ const getStyles = (theme) =>
     },
     reasonDesc: { color: theme.muted, fontSize: 13, lineHeight: 20 },
 
-    // Fleet Section
     fleetSection: { marginTop: 10, marginBottom: 10 },
     fleetScroll: { marginTop: 16 },
     fleetScrollContent: { paddingHorizontal: 22, gap: 14 },

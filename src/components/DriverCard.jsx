@@ -1,12 +1,7 @@
 import React from "react";
-import { View, Text, Image, StyleSheet, Platform } from "react-native";
-import { BlurView } from "expo-blur";
+import { View, Text, Image, StyleSheet } from "react-native";
 import { useApp } from "../navigation/AppNavigator";
 
-/**
- * Driver profile card with liquid glass styling.
- * Shows photo, name, rating, badge, bio, and skill tags.
- */
 export default function DriverCard({ driver }) {
   const { theme } = useApp();
   const styles = getStyles(theme);
@@ -14,14 +9,9 @@ export default function DriverCard({ driver }) {
 
   return (
     <View style={styles.card}>
-      {/* Glass blur layer */}
-      {Platform.OS === "ios" && (
-        <BlurView intensity={40} tint="light" style={StyleSheet.absoluteFill} />
-      )}
       <View style={styles.topShine} />
 
       <View style={styles.inner}>
-        {/* Photo + badge */}
         <View style={styles.photoWrap}>
           <Image
             source={driver.photo}
@@ -33,12 +23,10 @@ export default function DriverCard({ driver }) {
           </View>
         </View>
 
-        {/* Info */}
         <View style={styles.info}>
           <Text style={styles.name}>{driver.name}</Text>
           <Text style={styles.tagline}>{driver.tagline}</Text>
 
-          {/* Rating row */}
           <View style={styles.ratingRow}>
             <Text style={styles.stars}>{"★".repeat(stars)}</Text>
             <Text style={styles.ratingNum}>{driver.rating}</Text>
@@ -47,7 +35,6 @@ export default function DriverCard({ driver }) {
 
           <Text style={styles.bio}>{driver.bio}</Text>
 
-          {/* Skill tags */}
           <View style={styles.skillRow}>
             {driver.skills.map((skill) => (
               <View key={skill} style={styles.skillTag}>

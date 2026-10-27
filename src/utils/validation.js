@@ -1,8 +1,3 @@
-/**
- * Anterin form validation
- * Sesi 3: Input validation logic
- */
-
 export function validateBookingForm(form) {
   const errors = {};
 

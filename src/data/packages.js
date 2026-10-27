@@ -1,8 +1,3 @@
-/**
- * Anterin service packages — shared data
- * Three tiers: Essential, Signature, Grand Tour
- * All prices in IDR, include driver + BBM, max 12 hours
- */
 const packages = [
   {
     id: "essential",

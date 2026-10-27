@@ -7,10 +7,6 @@ import {
   calculateTripSurcharge,
 } from "../utils/pricing";
 
-/**
- * Price breakdown: base + extra hours + trip surcharge = total
- * Sesi 1-2: Props, pure computation display
- */
 export default function PriceSummary({
   basePrice,
   extraHours,

@@ -6,21 +6,9 @@ import {
   StyleSheet,
   Platform,
   Modal,
-  SafeAreaView,
 } from "react-native";
-import { BlurView } from "expo-blur";
 import { useApp } from "../navigation/AppNavigator";
 
-/**
- * Floating liquid-glass nav bar.
- * iOS 26 style: blurred, translucent, with subtle border highlight.
- *
- * Props:
- *   navigation — React Navigation navigation object
- *   title      — optional page title shown in the center
- *   showMenu   — whether to show the 3-dot menu button & navigation modal
- *                (default: true, set false on screens like Login)
- */
 export default function BrandHeader({ navigation, title, showMenu = true }) {
   const { theme } = useApp();
   const styles = getStyles(theme);
@@ -32,7 +20,6 @@ export default function BrandHeader({ navigation, title, showMenu = true }) {
     { label: "Layanan", screen: "Services" },
     { label: "Booking", screen: "Booking" },
     { label: "Status", screen: "Status" },
-    { label: "Lokasi", screen: "Location" },
   ];
 
   function go(screen) {
@@ -40,7 +27,6 @@ export default function BrandHeader({ navigation, title, showMenu = true }) {
     navigation.navigate(screen);
   }
 
-  /* Brand logo + name — tappable only when menu navigation is available */
   const BrandContent = (
     <>
       <View style={styles.brandMark}>
@@ -52,12 +38,7 @@ export default function BrandHeader({ navigation, title, showMenu = true }) {
 
   const NavBar = (
     <View style={styles.navWrapper}>
-      {Platform.OS === "ios" ? (
-        <BlurView intensity={70} tint="light" style={StyleSheet.absoluteFill} />
-      ) : (
-        <View style={[StyleSheet.absoluteFill, styles.androidBg]} />
-      )}
-      {/* Top shine line */}
+      <View style={[StyleSheet.absoluteFill, styles.navBg]} />
       <View style={styles.shineLine} />
 
       <View style={styles.navInner}>
@@ -89,7 +70,6 @@ export default function BrandHeader({ navigation, title, showMenu = true }) {
     <>
       {NavBar}
 
-      {/* Full-screen liquid glass menu — only rendered when showMenu is true */}
       {showMenu && (
         <Modal
           visible={menuOpen}
@@ -102,15 +82,7 @@ export default function BrandHeader({ navigation, title, showMenu = true }) {
             onPress={() => setMenuOpen(false)}
           >
             <View style={styles.menuSheet}>
-              {Platform.OS === "ios" ? (
-                <BlurView
-                  intensity={80}
-                  tint="dark"
-                  style={StyleSheet.absoluteFill}
-                />
-              ) : (
-                <View style={[StyleSheet.absoluteFill, styles.androidMenuBg]} />
-              )}
+              <View style={[StyleSheet.absoluteFill, styles.menuBg]} />
               <View style={styles.menuShineLine} />
               <View style={styles.menuContent}>
                 <Text style={styles.menuEyebrow}>NAVIGASI</Text>
@@ -173,7 +145,7 @@ const getStyles = (theme) =>
       paddingHorizontal: 16,
       paddingVertical: 13,
     },
-    androidBg: {
+    navBg: {
       backgroundColor: "rgba(248,248,252,0.92)",
     },
     brand: {
@@ -221,7 +193,6 @@ const getStyles = (theme) =>
       borderRadius: 2,
       backgroundColor: theme.navy,
     },
-    // Menu modal
     menuBackdrop: {
       flex: 1,
       justifyContent: "flex-end",
@@ -235,7 +206,7 @@ const getStyles = (theme) =>
       borderWidth: 1,
       borderColor: "rgba(255,255,255,0.2)",
     },
-    androidMenuBg: { backgroundColor: "rgba(18,35,63,0.95)" },
+    menuBg: { backgroundColor: "rgba(18,35,63,0.95)" },
     menuShineLine: {
       height: 1,
       backgroundColor: "rgba(255,255,255,0.3)",

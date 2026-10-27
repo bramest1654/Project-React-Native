@@ -1,15 +1,8 @@
 import React from "react";
-import { View, Text, Pressable, StyleSheet, Platform } from "react-native";
-import { BlurView } from "expo-blur";
-import { LinearGradient } from "expo-linear-gradient";
+import { View, Text, Pressable, StyleSheet } from "react-native";
 import { useApp } from "../navigation/AppNavigator";
 import { formatRupiah } from "../utils/pricing";
 
-/**
- * Package card with liquid glass styling when selected.
- * Unselected: clean light card.
- * Selected: navy gradient + blur shimmer.
- */
 export default function PackageCard({ item, selected, onSelect }) {
   const { theme } = useApp();
   const styles = getStyles(theme);
@@ -22,19 +15,8 @@ export default function PackageCard({ item, selected, onSelect }) {
       ]}
       onPress={() => onSelect(item)}
     >
-      {/* Glass overlay on selected */}
-      {selected && Platform.OS === "ios" && (
-        <BlurView
-          intensity={30}
-          tint="dark"
-          style={[StyleSheet.absoluteFill, { borderRadius: 20 }]}
-        />
-      )}
-
-      {/* Gold top border on selected */}
       {selected && <View style={styles.goldAccent} />}
 
-      {/* Shine line at top */}
       <View style={[styles.shineLine, selected && styles.shineLineSelected]} />
 
       <View style={styles.inner}>

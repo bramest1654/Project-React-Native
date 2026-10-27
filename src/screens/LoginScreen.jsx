@@ -12,23 +12,14 @@ import BrandHeader from "../components/BrandHeader";
 import GlassCard from "../components/GlassCard";
 import Input from "../components/Input";
 
-/**
- * LoginScreen — layar masuk sebelum TabNavigator.
- * Sesi "Collecting Data": Controlled components dengan useState,
- * reusable Input component, dan navigasi ke MainTabs setelah submit.
- *
- * Auth beneran menyusul di sesi "Communicate with Servers".
- */
 export default function LoginScreen({ navigation }) {
   const theme = useTheme();
   const styles = getStyles(theme);
 
-  // Controlled state — pola dari slide "Collecting Data"
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
   function handleLogin() {
-    // Auth beneran belum — digarap di sesi "Communicate with Servers"
     console.log("Login attempt:", { username, password });
     navigation.replace("MainTabs");
   }
@@ -39,10 +30,8 @@ export default function LoginScreen({ navigation }) {
         contentContainerStyle={styles.scrollContent}
         keyboardShouldPersistTaps="handled"
       >
-        {/* ── Brand Header — reuse existing component, hide menu ── */}
         <BrandHeader navigation={navigation} showMenu={false} />
 
-        {/* ── Hero copy ── */}
         <View style={styles.heroSection}>
           <Text style={styles.heroTitle}>
             Selamat{"\n"}
@@ -53,15 +42,9 @@ export default function LoginScreen({ navigation }) {
           </Text>
         </View>
 
-        {/* ── Login Form ── */}
-        <GlassCard
-          style={styles.formCard}
-          intensity={theme.isDark ? 30 : 60}
-          tint={theme.isDark ? "dark" : "light"}
-        >
+        <GlassCard style={styles.formCard}>
           <Text style={styles.eyebrow}>MASUK KE AKUN</Text>
 
-          {/* Pola persis dari slide Collecting Data */}
           <Input
             label="Username"
             placeholder="Masukkan username Anda"
@@ -90,7 +73,6 @@ export default function LoginScreen({ navigation }) {
           </Pressable>
         </GlassCard>
 
-        {/* ── Footer note ── */}
         <Text style={styles.footerNote}>
           Anterin · Private Driver Service
         </Text>
@@ -112,7 +94,6 @@ const getStyles = (theme) =>
       justifyContent: "center",
     },
 
-    // ── Hero copy ──
     heroSection: {
       paddingHorizontal: 4,
       marginBottom: 28,
@@ -134,7 +115,6 @@ const getStyles = (theme) =>
       lineHeight: 22,
     },
 
-    // ── Form card ──
     formCard: {
       padding: 24,
       marginBottom: 24,
@@ -147,7 +127,6 @@ const getStyles = (theme) =>
       marginBottom: 20,
     },
 
-    // ── Button ──
     loginButton: {
       backgroundColor: theme.navy,
       paddingVertical: 16,
@@ -171,7 +150,6 @@ const getStyles = (theme) =>
       transform: [{ scale: 0.98 }],
     },
 
-    // ── Footer ──
     footerNote: {
       color: theme.muted,
       fontSize: 11,

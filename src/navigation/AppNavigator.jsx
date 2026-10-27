@@ -7,10 +7,8 @@ import packagesData from "../data/packages";
 import HomeScreen from "../screens/HomeScreen";
 import BookingScreen from "../screens/BookingScreen";
 import StatusScreen from "../screens/StatusScreen";
-import LocationScreen from "../screens/LocationScreen";
 import SettingsScreen from "../screens/SettingsScreen";
 import LoginScreen from "../screens/LoginScreen";
-import GlassDock from "../components/GlassDock";
 import { lightTheme, darkTheme } from "../theme/colors";
 
 const AppContext = createContext(null);
@@ -34,10 +32,7 @@ function TabNavigator() {
   const theme = useTheme();
   return (
     <View style={[styles.screenContainer, { backgroundColor: theme.paper }]}>
-      <Tab.Navigator
-        tabBar={(props) => <GlassDock {...props} />}
-        screenOptions={{ headerShown: false }}
-      >
+      <Tab.Navigator screenOptions={{ headerShown: false }}>
         <Tab.Screen name="Home" component={HomeScreen} />
         <Tab.Screen name="Booking" component={BookingScreen} />
         <Tab.Screen name="Status" component={StatusScreen} />
@@ -77,10 +72,8 @@ export default function AppNavigator() {
       <StatusBar barStyle={isDarkMode ? "light-content" : "dark-content"} />
       <NavigationContainer>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
-          {/* Login — layar pertama sebelum masuk ke tab */}
           <Stack.Screen name="Login" component={LoginScreen} />
           <Stack.Screen name="MainTabs" component={TabNavigator} />
-          <Stack.Screen name="Location" component={LocationScreen} />
           <Stack.Screen name="Settings" component={SettingsScreen} />
         </Stack.Navigator>
       </NavigationContainer>

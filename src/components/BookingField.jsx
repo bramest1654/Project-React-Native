@@ -2,11 +2,6 @@ import React from "react";
 import { View, Text, TextInput, StyleSheet } from "react-native";
 import { useApp } from "../navigation/AppNavigator";
 
-/**
- * Reusable form field wrapper with label, TextInput, and error display.
- * Sesi 3: TextInput, input validation
- * Sesi 5: StyleSheet, central styles
- */
 export default function BookingField({
   label,
   value,

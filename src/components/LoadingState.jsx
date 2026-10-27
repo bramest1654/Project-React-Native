@@ -2,10 +2,6 @@ import React from "react";
 import { View, Text, ActivityIndicator, StyleSheet } from "react-native";
 import { useApp } from "../navigation/AppNavigator";
 
-/**
- * ActivityIndicator with message text, navy-gold themed.
- * Sesi 6: ActivityIndicator for loading states
- */
 export default function LoadingState({ message = "Memuat..." }) {
   const { theme } = useApp();
   const styles = getStyles(theme);

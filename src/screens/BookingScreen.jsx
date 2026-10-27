@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import {
   View,
   Text,
@@ -12,31 +12,15 @@ import {
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import BrandHeader from "../components/BrandHeader";
 import BookingField from "../components/BookingField";
 import PriceSummary from "../components/PriceSummary";
-import AvailabilityCard from "../components/AvailabilityCard";
-import LoadingState from "../components/LoadingState";
 import { useApp } from "../navigation/AppNavigator";
 import { formatRupiah, calculateTotal } from "../utils/pricing";
 import { validateBookingForm } from "../utils/validation";
 import { createBookingObject, INITIAL_FORM } from "../utils/booking";
-import { contactAdmin } from "../services/contactService";
-import { submitBookingAPI } from "../services/api";
 
-const DRAFT_KEY = "anterin-draft";
-
-/**
- * Multi-step booking form with validation, review, confirmation modal.
- * Sesi 3: TextInput, Picker, DateTimePicker, validation
- * Sesi 4: Flexbox layout
- * Sesi 5: StyleSheet, design system
- * Sesi 6: Modal, ActivityIndicator, Alert
- * Sesi 7: Pressable with visual feedback
- * Sesi 9: AsyncStorage for draft persistence
- */
-export default function BookingScreen({ navigation, route }) {
+export default function BookingScreen({ navigation }) {
   const { theme } = useApp();
   const styles = getStyles(theme);
   const { packages, selectedPackage, setSelectedPackage, setBooking } =
@@ -48,38 +32,6 @@ export default function BookingScreen({ navigation, route }) {
   const [confirmedBooking, setConfirmedBooking] = useState(null);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
-  const [saving, setSaving] = useState(false);
-
-  // Receive pickup location from Map
-  useEffect(() => {
-    if (route.params?.pickupCoord) {
-      const coord = route.params.pickupCoord;
-      updateField(
-        "pickup",
-        `${coord.latitude.toFixed(5)}, ${coord.longitude.toFixed(5)}`,
-      );
-    }
-  }, [route.params?.pickupCoord]);
-
-  // Load draft from AsyncStorage on mount
-  useEffect(() => {
-    AsyncStorage.getItem(DRAFT_KEY)
-      .then((stored) => {
-        if (stored) {
-          const parsed = JSON.parse(stored);
-          setForm((prev) => ({ ...prev, ...parsed }));
-        }
-      })
-      .catch(() => {});
-  }, []);
-
-  // Save draft to AsyncStorage on form change
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      AsyncStorage.setItem(DRAFT_KEY, JSON.stringify(form)).catch(() => {});
-    }, 500);
-    return () => clearTimeout(timeout);
-  }, [form]);
 
   const updateField = useCallback(
     (field, value) => {
@@ -115,28 +67,11 @@ export default function BookingScreen({ navigation, route }) {
     setStep(2);
   }
 
-  async function handleConfirm() {
-    setSaving(true);
+  function handleConfirm() {
     const bookingObj = createBookingObject(form, selectedPackage, total);
-    try {
-      // API call (Mock or Real depending on env vars)
-      await submitBookingAPI(bookingObj);
-
-      // Get existing history & save to local storage
-      const existing = await AsyncStorage.getItem("anterin-history");
-      const history = existing ? JSON.parse(existing) : [];
-      history.unshift(bookingObj);
-      await AsyncStorage.setItem("anterin-history", JSON.stringify(history));
-
-      setBooking(bookingObj);
-      setConfirmedBooking(bookingObj);
-      setModalOpen(true);
-      await AsyncStorage.removeItem(DRAFT_KEY);
-    } catch (err) {
-      Alert.alert("Error", "Gagal mengirim booking ke server.");
-    } finally {
-      setSaving(false);
-    }
+    setBooking(bookingObj);
+    setConfirmedBooking(bookingObj);
+    setModalOpen(true);
   }
 
   function handleDateChange(event, selectedDate) {
@@ -155,7 +90,6 @@ export default function BookingScreen({ navigation, route }) {
     }
   }
 
-  // --- Step 1: Form ---
   if (step === 1) {
     return (
       <SafeAreaView style={styles.container}>
@@ -168,7 +102,6 @@ export default function BookingScreen({ navigation, route }) {
             <Text style={styles.goldText}>lebih mudah.</Text>
           </Text>
 
-          {/* Progress indicator */}
           <View style={styles.stepper}>
             <View style={[styles.stepDot, styles.stepActive]} />
             <Text style={[styles.stepText, styles.stepActive]}>01 Detail</Text>
@@ -177,7 +110,6 @@ export default function BookingScreen({ navigation, route }) {
             <Text style={styles.stepText}>02 Review</Text>
           </View>
 
-          {/* Package selector */}
           <Text style={styles.sectionLabel}>PILIH PAKET</Text>
           <View style={styles.miniPackageRow}>
             {packages.map((item) => (
@@ -204,7 +136,6 @@ export default function BookingScreen({ navigation, route }) {
             ))}
           </View>
 
-          {/* Form fields */}
           <Text style={styles.sectionLabel}>DETAIL PERJALANAN</Text>
 
           <BookingField
@@ -223,7 +154,6 @@ export default function BookingScreen({ navigation, route }) {
             error={errors.phone}
           />
 
-          {/* Date and Time picker */}
           <View style={styles.twoColumns}>
             <View style={styles.column}>
               <Text style={styles.inputLabel}>TANGGAL</Text>
@@ -277,7 +207,6 @@ export default function BookingScreen({ navigation, route }) {
             </View>
           </View>
 
-          {/* Two-column: Passengers + Luggage */}
           <View style={styles.twoColumns}>
             <View style={styles.column}>
               <Text style={styles.inputLabel}>PENUMPANG</Text>
@@ -317,7 +246,6 @@ export default function BookingScreen({ navigation, route }) {
             </View>
           </View>
 
-          {/* Two-column: Trip type + Extra hours */}
           <View style={styles.twoColumns}>
             <View style={styles.column}>
               <Text style={styles.inputLabel}>TIPE PERJALANAN</Text>
@@ -371,7 +299,6 @@ export default function BookingScreen({ navigation, route }) {
             multiline
           />
 
-          {/* Price summary */}
           <View style={styles.summaryBox}>
             <Text style={styles.summaryTitle}>{selectedPackage.name}</Text>
             <PriceSummary
@@ -399,7 +326,6 @@ export default function BookingScreen({ navigation, route }) {
     );
   }
 
-  // --- Step 2: Review ---
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.content}>
@@ -411,7 +337,6 @@ export default function BookingScreen({ navigation, route }) {
           <Text style={styles.goldText}>lebih mudah.</Text>
         </Text>
 
-        {/* Progress indicator */}
         <View style={styles.stepper}>
           <View style={[styles.stepDot, styles.stepActive]} />
           <Text style={[styles.stepText, styles.stepActive]}>01 Detail</Text>
@@ -420,7 +345,6 @@ export default function BookingScreen({ navigation, route }) {
           <Text style={[styles.stepText, styles.stepActive]}>02 Review</Text>
         </View>
 
-        {/* Review card */}
         <View style={styles.reviewCard}>
           <Text style={styles.sectionLabel}>REVIEW PESANAN</Text>
 
@@ -479,17 +403,11 @@ export default function BookingScreen({ navigation, route }) {
               pressed && styles.pressed,
             ]}
             onPress={handleConfirm}
-            disabled={saving}
           >
-            {saving ? (
-              <LoadingState message="Menyimpan..." />
-            ) : (
-              <Text style={styles.primaryText}>Konfirmasi booking →</Text>
-            )}
+            <Text style={styles.primaryText}>Konfirmasi booking →</Text>
           </Pressable>
         </View>
 
-        {/* Sticky summary sidebar (scroll bottom) */}
         <View style={styles.stickySummary}>
           <Text style={styles.eyebrow}>RINGKASAN</Text>
           <Text style={styles.summaryTitle2}>{selectedPackage.name}</Text>
@@ -497,11 +415,9 @@ export default function BookingScreen({ navigation, route }) {
           <Text style={styles.summaryNote2}>
             Maksimal 12 jam · Driver + BBM
           </Text>
-          <AvailabilityCard date={form.date} />
         </View>
       </ScrollView>
 
-      {/* Success modal */}
       <Modal
         visible={modalOpen}
         transparent
@@ -528,20 +444,6 @@ export default function BookingScreen({ navigation, route }) {
               <Text style={styles.boldText}>{confirmedBooking?.code}</Text>.
               Admin akan mengecek jadwal lalu menghubungi lewat Telepon/Email.
             </Text>
-
-            <Pressable
-              style={({ pressed }) => [
-                styles.primaryButton,
-                styles.waButton,
-                pressed && styles.pressed,
-              ]}
-              onPress={() => {
-                setModalOpen(false);
-                if (confirmedBooking) contactAdmin();
-              }}
-            >
-              <Text style={styles.primaryText}>Hubungi Admin ↗</Text>
-            </Pressable>
 
             <Pressable
               onPress={() => {
@@ -740,7 +642,6 @@ const getStyles = (theme) =>
       marginBottom: 4,
     },
     summaryNote2: { color: "#c7d0dd", fontSize: 11 },
-    // Modal
     modalBackdrop: {
       flex: 1,
       justifyContent: "center",
@@ -781,5 +682,4 @@ const getStyles = (theme) =>
       textAlign: "center",
       marginBottom: 24,
     },
-    waButton: { alignSelf: "center", marginBottom: 12 },
   });

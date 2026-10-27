@@ -1,8 +1,3 @@
-/**
- * Anterin booking utilities
- * Sesi 1-2: Pure functions for booking operations
- */
-
 export function generateBookingCode() {
   const timestamp = Date.now().toString().slice(-6);
   return "ANT-" + timestamp;

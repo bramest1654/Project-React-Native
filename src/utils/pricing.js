@@ -1,8 +1,3 @@
-/**
- * Anterin pricing utilities
- * Sesi 1-2: Pure functions, one-way data flow
- */
-
 const EXTRA_HOUR_RATE = 100000;
 const OUT_OF_CITY_SURCHARGE = 150000;
 

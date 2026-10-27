@@ -1,7 +1,3 @@
-/**
- * Anterin Design System — Spacing Scale
- * Sesi 5: Reusable spacing constants
- */
 const spacing = {
   xs: 4,
   sm: 8,

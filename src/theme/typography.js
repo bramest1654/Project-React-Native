@@ -1,7 +1,3 @@
-/**
- * Anterin Design System — Typography
- * Sesi 5: Reusable typography constants
- */
 const typography = {
   heroTitle: {
     fontSize: 44,
