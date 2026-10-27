@@ -3,6 +3,7 @@ import { View, StyleSheet, StatusBar } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { ThemeProvider } from "styled-components/native";
 import packagesData from "../data/packages";
 import HomeScreen from "../screens/HomeScreen";
 import BookingScreen from "../screens/BookingScreen";
@@ -74,16 +75,23 @@ export default function AppNavigator() {
 
   return (
     <AppContext.Provider value={contextValue}>
-      <StatusBar barStyle={isDarkMode ? "light-content" : "dark-content"} />
-      <NavigationContainer>
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
-          {/* Login — layar pertama sebelum masuk ke tab */}
-          <Stack.Screen name="Login" component={LoginScreen} />
-          <Stack.Screen name="MainTabs" component={TabNavigator} />
-          <Stack.Screen name="Location" component={LocationScreen} />
-          <Stack.Screen name="Settings" component={SettingsScreen} />
-        </Stack.Navigator>
-      </NavigationContainer>
+      {/* ThemeProvider: warna tema yang sama juga bisa dibaca styled-components */}
+      <ThemeProvider theme={theme}>
+        <StatusBar barStyle={isDarkMode ? "light-content" : "dark-content"} />
+        <NavigationContainer>
+          <Stack.Navigator
+            initialRouteName="Login"
+            screenOptions={{ headerShown: false }}
+          >
+            {/* Login — layar pertama sebelum masuk ke tab */}
+            <Stack.Screen name="Login" component={LoginScreen} />
+            {/* Tab Navigator (Home, Booking, Status) di-nest di dalam Stack */}
+            <Stack.Screen name="MainTabs" component={TabNavigator} />
+            <Stack.Screen name="Location" component={LocationScreen} />
+            <Stack.Screen name="Settings" component={SettingsScreen} />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </ThemeProvider>
     </AppContext.Provider>
   );
 }

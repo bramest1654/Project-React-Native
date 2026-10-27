@@ -5,10 +5,10 @@ import {
   ScrollView,
   Pressable,
   Modal,
+  Alert,
   StyleSheet,
   SafeAreaView,
   Platform,
-  Switch,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
@@ -20,6 +20,7 @@ import AvailabilityCard from "../components/AvailabilityCard";
 import LoadingState from "../components/LoadingState";
 import AppModal from "../components/AppModal";
 import BookingProgress from "../components/BookingProgress";
+import SectionHeading from "../components/SectionHeading";
 import { useApp } from "../navigation/AppNavigator";
 import { formatRupiah, calculateTotal } from "../utils/pricing";
 import { validateBookingForm, getFormProgress } from "../utils/validation";
@@ -34,8 +35,9 @@ const DRAFT_KEY = "anterin-draft";
  * Sesi 3: TextInput, Picker, DateTimePicker, validation
  * Sesi 4: Flexbox layout
  * Sesi 5: StyleSheet, design system
- * Sesi 6: Modal (alert / confirmation / notification), ActivityIndicator,
- *         progress bar (react-native-progress)
+ * Sesi 5: Styled Components (SectionHeading)
+ * Sesi 6: Modal (alert / confirmation / notification), Alert.alert,
+ *         ActivityIndicator, progress bar (react-native-progress)
  * Sesi 7: Pressable with visual feedback
  * Sesi 9: AsyncStorage for draft persistence
  */
@@ -155,12 +157,12 @@ export default function BookingScreen({ navigation, route }) {
       setModalOpen(true);
       await AsyncStorage.removeItem(DRAFT_KEY);
     } catch (err) {
-      setDialog({
-        type: "alert",
-        title: "Koneksi gagal",
-        message:
-          "Booking gagal dikirim ke server. Cek koneksi internet lalu coba lagi.",
-      });
+      // Alert bawaan React Native (Alert.alert) — tipe "alert" di slide Sesi 6
+      Alert.alert(
+        "Koneksi gagal",
+        "Booking gagal dikirim ke server. Cek koneksi internet lalu coba lagi.",
+        [{ text: "Tutup" }],
+      );
     } finally {
       setSaving(false);
     }
@@ -201,11 +203,11 @@ export default function BookingScreen({ navigation, route }) {
         <ScrollView contentContainerStyle={styles.content}>
           <BrandHeader navigation={navigation} title="BOOKING" />
 
-          <Text style={styles.eyebrow}>JADWALKAN PERJALANAN</Text>
-          <Text style={styles.pageTitle}>
-            Booking yang{"\n"}
-            <Text style={styles.goldText}>lebih mudah.</Text>
-          </Text>
+          <SectionHeading
+            eyebrow="JADWALKAN PERJALANAN"
+            title="Booking yang"
+            highlight="lebih mudah."
+          />
 
           {/* Progress bar — seberapa lengkap form sudah diisi */}
           <BookingProgress step={1} progress={getFormProgress(form)} />
@@ -439,11 +441,11 @@ export default function BookingScreen({ navigation, route }) {
       <ScrollView contentContainerStyle={styles.content}>
         <BrandHeader navigation={navigation} title="BOOKING" />
 
-        <Text style={styles.eyebrow}>JADWALKAN PERJALANAN</Text>
-        <Text style={styles.pageTitle}>
-          Booking yang{"\n"}
-          <Text style={styles.goldText}>lebih mudah.</Text>
-        </Text>
+        <SectionHeading
+          eyebrow="JADWALKAN PERJALANAN"
+          title="Booking yang"
+          highlight="lebih mudah."
+        />
 
         <BookingProgress step={2} progress={1} />
 
@@ -598,15 +600,6 @@ const getStyles = (theme) =>
       fontWeight: "700",
       marginBottom: 12,
     },
-    pageTitle: {
-      color: theme.text,
-      fontSize: 34,
-      lineHeight: 38,
-      fontWeight: "800",
-      letterSpacing: -1.5,
-      marginBottom: 20,
-    },
-    goldText: { color: theme.gold },
     sectionLabel: {
       color: theme.text,
       fontSize: 13,

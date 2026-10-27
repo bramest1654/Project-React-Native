@@ -16,6 +16,7 @@ import Input from "../components/Input";
  * LoginScreen — layar masuk sebelum TabNavigator.
  * Sesi "Collecting Data": Controlled components dengan useState,
  * reusable Input component, dan navigasi ke MainTabs setelah submit.
+ * Sesi 7: onPressIn / onPressOut — tahan tombol untuk intip password.
  *
  * Auth beneran menyusul di sesi "Communicate with Servers".
  */
@@ -26,6 +27,7 @@ export default function LoginScreen({ navigation }) {
   // Controlled state — pola dari slide "Collecting Data"
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   function handleLogin() {
     // Auth beneran belum — digarap di sesi "Communicate with Servers"
@@ -74,10 +76,24 @@ export default function LoginScreen({ navigation }) {
           <Input
             label="Password"
             placeholder="Masukkan password Anda"
-            secureTextEntry
+            secureTextEntry={!showPassword}
             onChangeText={setPassword}
             value={password}
           />
+
+          {/* onPressIn: jari mulai menekan → tampilkan password.
+              onPressOut: jari dilepas → sembunyikan lagi. */}
+          <Pressable
+            style={styles.peekButton}
+            onPressIn={() => setShowPassword(true)}
+            onPressOut={() => setShowPassword(false)}
+          >
+            <Text style={styles.peekText}>
+              {showPassword
+                ? "Lepas untuk menyembunyikan"
+                : "Tahan untuk lihat password"}
+            </Text>
+          </Pressable>
 
           <Pressable
             style={({ pressed }) => [
@@ -145,6 +161,18 @@ const getStyles = (theme) =>
       letterSpacing: 1.5,
       fontWeight: "700",
       marginBottom: 20,
+    },
+
+    peekButton: {
+      alignSelf: "flex-end",
+      marginTop: -8,
+      marginBottom: 12,
+      paddingVertical: 4,
+    },
+    peekText: {
+      color: theme.muted,
+      fontSize: 12,
+      fontWeight: "600",
     },
 
     // ── Button ──

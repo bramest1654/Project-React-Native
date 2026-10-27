@@ -73,10 +73,11 @@ export default function LocationScreen({ navigation }) {
   }
 
   function handleSetPickup() {
-    // Navigate back to booking with coords
-    // Usually we would pass this to context or params
-    navigation.navigate("Booking", {
-      pickupCoord: location,
+    // Kembali ke tab Booking sambil bawa koordinat lewat params.
+    // Booking ada di dalam Tab Navigator ("MainTabs"), jadi pakai nested navigation.
+    navigation.navigate("MainTabs", {
+      screen: "Booking",
+      params: { pickupCoord: location },
     });
   }
 

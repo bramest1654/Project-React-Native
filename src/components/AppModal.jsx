@@ -1,5 +1,12 @@
 import React, { useEffect } from "react";
-import { View, Text, Modal, Pressable, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  Modal,
+  Pressable,
+  TouchableWithoutFeedback,
+  StyleSheet,
+} from "react-native";
 import { useTheme } from "../navigation/AppNavigator";
 
 /**
@@ -7,6 +14,10 @@ import { useTheme } from "../navigation/AppNavigator";
  * - "alert"        : hal penting terjadi, user harus menekan OK untuk menutup.
  * - "confirmation" : user harus memilih Batal / Ya sebelum aksi dijalankan.
  * - "notification" : info singkat, tidak memblokir, hilang sendiri.
+ *
+ * Sesi 7: TouchableWithoutFeedback di backdrop — tap area gelap di luar kotak
+ * untuk menutup modal. Tidak perlu efek visual karena feedback-nya adalah
+ * modal yang tertutup.
  */
 export default function AppModal({
   visible,
@@ -57,42 +68,50 @@ export default function AppModal({
       animationType="fade"
       onRequestClose={onClose}
     >
-      <View style={styles.backdrop}>
-        <View style={styles.box}>
-          <Text
-            style={[styles.eyebrow, type === "alert" && styles.eyebrowAlert]}
-          >
-            {type === "alert" ? "PERHATIAN" : "KONFIRMASI"}
-          </Text>
-          <Text style={styles.title}>{title}</Text>
-          <Text style={styles.message}>{message}</Text>
-
-          <View style={styles.actions}>
-            {type === "confirmation" && (
-              <Pressable
-                style={({ pressed }) => [
-                  styles.outlineButton,
-                  pressed && styles.pressed,
+      <TouchableWithoutFeedback onPress={onClose}>
+        <View style={styles.backdrop}>
+          {/* TouchableWithoutFeedback kosong supaya tap di dalam kotak tidak ikut menutup */}
+          <TouchableWithoutFeedback>
+            <View style={styles.box}>
+              <Text
+                style={[
+                  styles.eyebrow,
+                  type === "alert" && styles.eyebrowAlert,
                 ]}
-                onPress={onClose}
               >
-                <Text style={styles.outlineText}>{cancelText}</Text>
-              </Pressable>
-            )}
-            <Pressable
-              style={({ pressed }) => [
-                styles.primaryButton,
-                pressed && styles.pressed,
-              ]}
-              onPress={type === "confirmation" ? onConfirm : onClose}
-            >
-              <Text style={styles.primaryText}>
-                {type === "confirmation" ? confirmText : "OK"}
+                {type === "alert" ? "PERHATIAN" : "KONFIRMASI"}
               </Text>
-            </Pressable>
-          </View>
+              <Text style={styles.title}>{title}</Text>
+              <Text style={styles.message}>{message}</Text>
+
+              <View style={styles.actions}>
+                {type === "confirmation" && (
+                  <Pressable
+                    style={({ pressed }) => [
+                      styles.outlineButton,
+                      pressed && styles.pressed,
+                    ]}
+                    onPress={onClose}
+                  >
+                    <Text style={styles.outlineText}>{cancelText}</Text>
+                  </Pressable>
+                )}
+                <Pressable
+                  style={({ pressed }) => [
+                    styles.primaryButton,
+                    pressed && styles.pressed,
+                  ]}
+                  onPress={type === "confirmation" ? onConfirm : onClose}
+                >
+                  <Text style={styles.primaryText}>
+                    {type === "confirmation" ? confirmText : "OK"}
+                  </Text>
+                </Pressable>
+              </View>
+            </View>
+          </TouchableWithoutFeedback>
         </View>
-      </View>
+      </TouchableWithoutFeedback>
     </Modal>
   );
 }

@@ -13,6 +13,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import BrandHeader from "../components/BrandHeader";
 import LoadingState from "../components/LoadingState";
 import AppModal from "../components/AppModal";
+import SectionHeading from "../components/SectionHeading";
 import { useApp } from "../navigation/AppNavigator";
 import { formatRupiah } from "../utils/pricing";
 import { contactAdmin } from "../services/contactService";
@@ -64,9 +65,9 @@ export default function StatusScreen({ navigation }) {
   if (loading) {
     return (
       <SafeAreaView style={styles.container}>
-        <View style={styles.content}>
+        <View style={[styles.content, styles.loadingContent]}>
           <BrandHeader navigation={navigation} title="STATUS" />
-          <LoadingState message="Memuat riwayat booking..." />
+          <LoadingState size="large" message="Memuat riwayat booking..." />
         </View>
       </SafeAreaView>
     );
@@ -157,11 +158,11 @@ export default function StatusScreen({ navigation }) {
           <>
             <BrandHeader navigation={navigation} title="STATUS" />
 
-            <Text style={styles.eyebrow}>RIWAYAT PESANAN</Text>
-            <Text style={styles.pageTitle}>
-              Semua perjalanan,{"\n"}
-              <Text style={styles.goldText}>tercatat rapi.</Text>
-            </Text>
+            <SectionHeading
+              eyebrow="RIWAYAT PESANAN"
+              title="Semua perjalanan,"
+              highlight="tercatat rapi."
+            />
             {history.length > 0 && (
               <Text style={styles.hint}>Tekan lama kartu untuk menghapus.</Text>
             )}
@@ -210,22 +211,7 @@ const getStyles = (theme) =>
   StyleSheet.create({
     container: { flex: 1, backgroundColor: theme.paper },
     content: { padding: 22, paddingBottom: 110, gap: 16 },
-    eyebrow: {
-      color: theme.gold,
-      fontSize: 10,
-      letterSpacing: 1.2,
-      fontWeight: "700",
-      marginBottom: 6,
-    },
-    pageTitle: {
-      color: theme.text,
-      fontSize: 32,
-      lineHeight: 36,
-      fontWeight: "800",
-      letterSpacing: -1.5,
-      marginBottom: 16,
-    },
-    goldText: { color: theme.gold },
+    loadingContent: { flex: 1 },
     cardTouch: { borderRadius: 8, marginBottom: 20 },
     statusCard: {
       backgroundColor: theme.card,

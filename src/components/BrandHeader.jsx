@@ -11,6 +11,9 @@ import {
 import { BlurView } from "expo-blur";
 import { useApp } from "../navigation/AppNavigator";
 
+// Screen yang ada di dalam Tab Navigator ("MainTabs")
+const TAB_SCREENS = ["Home", "Booking", "Status"];
+
 /**
  * Floating liquid-glass nav bar.
  * iOS 26 style: blurred, translucent, with subtle border highlight.
@@ -29,7 +32,6 @@ export default function BrandHeader({ navigation, title, showMenu = true }) {
   const navItems = [
     { label: "Pengaturan", screen: "Settings" },
     { label: "Home", screen: "Home" },
-    { label: "Layanan", screen: "Services" },
     { label: "Booking", screen: "Booking" },
     { label: "Status", screen: "Status" },
     { label: "Lokasi", screen: "Location" },
@@ -37,7 +39,14 @@ export default function BrandHeader({ navigation, title, showMenu = true }) {
 
   function go(screen) {
     setMenuOpen(false);
-    navigation.navigate(screen);
+    // Home/Booking/Status ada di dalam Tab Navigator yang di-nest di Stack.
+    // Supaya bisa dibuka dari screen Stack (Settings, Location), navigasinya
+    // lewat "MainTabs" dulu baru ke tab yang dituju (nested navigation).
+    if (TAB_SCREENS.includes(screen)) {
+      navigation.navigate("MainTabs", { screen });
+    } else {
+      navigation.navigate(screen);
+    }
   }
 
   /* Brand logo + name — tappable only when menu navigation is available */
@@ -62,10 +71,7 @@ export default function BrandHeader({ navigation, title, showMenu = true }) {
 
       <View style={styles.navInner}>
         {showMenu ? (
-          <Pressable
-            onPress={() => navigation.navigate("Home")}
-            style={styles.brand}
-          >
+          <Pressable onPress={() => go("Home")} style={styles.brand}>
             {BrandContent}
           </Pressable>
         ) : (
@@ -75,7 +81,11 @@ export default function BrandHeader({ navigation, title, showMenu = true }) {
         {title ? <Text style={styles.pageTitle}>{title}</Text> : null}
 
         {showMenu && (
-          <Pressable style={styles.menuButton} onPress={() => setMenuOpen(true)}>
+          <Pressable
+            style={styles.menuButton}
+            onPress={() => setMenuOpen(true)}
+            accessibilityLabel="Buka menu navigasi"
+          >
             <View style={styles.menuDot} />
             <View style={styles.menuDot} />
             <View style={styles.menuDot} />
