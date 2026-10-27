@@ -4,6 +4,7 @@ import {
   View,
   Text,
   ScrollView,
+  FlatList,
   Pressable,
   Animated,
   StyleSheet,
@@ -18,16 +19,66 @@ import BrandHeader from "../components/BrandHeader";
 import GlassCard from "../components/GlassCard";
 import PackageCard from "../components/PackageCard";
 import DriverCard from "../components/DriverCard";
+import AppModal from "../components/AppModal";
 import drivers from "../data/drivers";
 import { useApp } from "../navigation/AppNavigator";
 
 const { width } = Dimensions.get("window");
+
+const FLEET_FEATURES = [
+  {
+    icon: "💺",
+    title: "Captain Seat",
+    desc: "Kursi baris kedua independen untuk kenyamanan VIP & ruang kaki ekstra.",
+  },
+  {
+    icon: "🤫",
+    title: "Kabin Kedap",
+    desc: "Perjalanan hening dan minim getaran berkat platform TNGA terbaru.",
+  },
+  {
+    icon: "❄️",
+    title: "Dual Zone AC",
+    desc: "Pendingin kabin ganda memastikan suhu ideal hingga baris ketiga.",
+  },
+  {
+    icon: "💼",
+    title: "Bagasi Luas",
+    desc: "Kapasitas bagasi lega untuk koper besar dan barang bawaan.",
+  },
+];
+// Lebar kartu armada (170) + gap (14), dipakai buat hitung index saat scroll
+const FLEET_ITEM_WIDTH = 184;
+
+/**
+ * Sesi 7: Handling Gestures
+ * - ScrollView events: onScroll, onScrollBeginDrag/EndDrag, onMomentumScrollEnd
+ * - FlatList horizontal untuk list armada
+ * - PackageCard onLongPress buat lihat detail paket (pakai Modal, Sesi 6)
+ */
 
 export default function HomeScreen({ navigation }) {
   const { theme, packages, selectedPackage, setSelectedPackage } = useApp();
   const styles = getStyles(theme);
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(30)).current;
+  const scrollRef = useRef(null);
+  const [showBackToTop, setShowBackToTop] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const [fleetIndex, setFleetIndex] = useState(0);
+  const [previewPackage, setPreviewPackage] = useState(null);
+
+  // onScroll jalan terus selama scroll — tombol "ke atas" muncul kalau sudah jauh
+  function handleScroll(event) {
+    const offsetY = event.nativeEvent.contentOffset.y;
+    setShowBackToTop(offsetY > 600);
+  }
+
+  // onMomentumScrollEnd — list armada berhenti, update titik indikator
+  function handleFleetScrollEnd(event) {
+    const offsetX = event.nativeEvent.contentOffset.x;
+    setFleetIndex(Math.round(offsetX / FLEET_ITEM_WIDTH));
+  }
 
   useEffect(() => {
     Animated.parallel([
@@ -47,8 +98,13 @@ export default function HomeScreen({ navigation }) {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView
+        ref={scrollRef}
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
+        scrollEventThrottle={16}
+        onScroll={handleScroll}
+        onScrollBeginDrag={() => setIsDragging(true)}
+        onScrollEndDrag={() => setIsDragging(false)}
       >
         <BrandHeader navigation={navigation} title="" />
 
@@ -165,41 +221,32 @@ export default function HomeScreen({ navigation }) {
             <Text style={styles.goldText}>Toyota Innova Zenix.</Text>
           </Text>
 
-          <ScrollView
+          <FlatList
             horizontal
+            data={FLEET_FEATURES}
+            keyExtractor={(item) => item.title}
             showsHorizontalScrollIndicator={false}
             style={styles.fleetScroll}
             contentContainerStyle={styles.fleetScrollContent}
-          >
-            {[
-              {
-                icon: "💺",
-                title: "Captain Seat",
-                desc: "Kursi baris kedua independen untuk kenyamanan VIP & ruang kaki ekstra.",
-              },
-              {
-                icon: "🤫",
-                title: "Kabin Kedap",
-                desc: "Perjalanan hening dan minim getaran berkat platform TNGA terbaru.",
-              },
-              {
-                icon: "❄️",
-                title: "Dual Zone AC",
-                desc: "Pendingin kabin ganda memastikan suhu ideal hingga baris ketiga.",
-              },
-              {
-                icon: "💼",
-                title: "Bagasi Luas",
-                desc: "Kapasitas bagasi lega untuk koper besar dan barang bawaan.",
-              },
-            ].map((feature, i) => (
-              <View key={i} style={styles.fleetCard}>
-                <Text style={styles.fleetIcon}>{feature.icon}</Text>
-                <Text style={styles.fleetTitle}>{feature.title}</Text>
-                <Text style={styles.fleetDesc}>{feature.desc}</Text>
+            snapToInterval={FLEET_ITEM_WIDTH}
+            decelerationRate="fast"
+            onMomentumScrollEnd={handleFleetScrollEnd}
+            renderItem={({ item }) => (
+              <View style={styles.fleetCard}>
+                <Text style={styles.fleetIcon}>{item.icon}</Text>
+                <Text style={styles.fleetTitle}>{item.title}</Text>
+                <Text style={styles.fleetDesc}>{item.desc}</Text>
               </View>
+            )}
+          />
+          <View style={styles.dotRow}>
+            {FLEET_FEATURES.map((item, i) => (
+              <View
+                key={item.title}
+                style={[styles.dot, i === fleetIndex && styles.dotActive]}
+              />
             ))}
-          </ScrollView>
+          </View>
         </View>
 
         {/* Why Choose Anterin Section */}
@@ -250,6 +297,10 @@ export default function HomeScreen({ navigation }) {
             <Text style={styles.goldText}>versi kamu.</Text>
           </Text>
 
+          <Text style={styles.hint}>
+            Tekan lama kartu paket untuk lihat ringkasannya.
+          </Text>
+
           {packages.map((item) => (
             <PackageCard
               key={item.id}
@@ -259,6 +310,7 @@ export default function HomeScreen({ navigation }) {
                 setSelectedPackage(item);
                 navigation.navigate("Booking");
               }}
+              onLongPress={(item) => setPreviewPackage(item)}
             />
           ))}
 
@@ -335,6 +387,39 @@ export default function HomeScreen({ navigation }) {
           </View>
         </View>
       </ScrollView>
+
+      {/* Tombol kembali ke atas, muncul dari event onScroll */}
+      {showBackToTop && (
+        <Pressable
+          style={({ pressed }) => [
+            styles.backToTop,
+            isDragging && styles.backToTopDragging,
+            pressed && styles.pressed,
+          ]}
+          onPress={() => scrollRef.current?.scrollTo({ y: 0, animated: true })}
+        >
+          <Text style={styles.backToTopText}>↑</Text>
+        </Pressable>
+      )}
+
+      <AppModal
+        visible={previewPackage !== null}
+        type="confirmation"
+        title={previewPackage?.name}
+        message={
+          previewPackage
+            ? `${previewPackage.description}\n\n${previewPackage.features.join(" · ")}`
+            : ""
+        }
+        confirmText="Booking paket ini"
+        cancelText="Tutup"
+        onConfirm={() => {
+          setSelectedPackage(previewPackage);
+          setPreviewPackage(null);
+          navigation.navigate("Booking");
+        }}
+        onClose={() => setPreviewPackage(null)}
+      />
     </SafeAreaView>
   );
 }
@@ -576,6 +661,35 @@ const getStyles = (theme) =>
     // Fleet Section
     fleetSection: { marginTop: 10, marginBottom: 10 },
     fleetScroll: { marginTop: 16 },
+    dotRow: {
+      flexDirection: "row",
+      justifyContent: "center",
+      gap: 6,
+      marginTop: 14,
+    },
+    dot: {
+      width: 6,
+      height: 6,
+      borderRadius: 3,
+      backgroundColor: theme.line,
+    },
+    dotActive: { width: 18, backgroundColor: theme.gold },
+    hint: { color: theme.muted, fontSize: 11, marginBottom: 12 },
+    backToTop: {
+      position: "absolute",
+      right: 20,
+      bottom: 120,
+      width: 44,
+      height: 44,
+      borderRadius: 22,
+      backgroundColor: theme.navy,
+      borderWidth: 1,
+      borderColor: theme.gold,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    backToTopDragging: { opacity: 0.4 },
+    backToTopText: { color: theme.gold, fontSize: 18, fontWeight: "800" },
     fleetScrollContent: { paddingHorizontal: 22, gap: 14 },
     fleetCard: {
       backgroundColor: theme.card,

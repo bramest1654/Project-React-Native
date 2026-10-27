@@ -2,8 +2,9 @@ import React, { useEffect, useState, useCallback } from "react";
 import {
   View,
   Text,
-  ScrollView,
+  FlatList,
   Pressable,
+  TouchableHighlight,
   StyleSheet,
   SafeAreaView,
 } from "react-native";
@@ -11,12 +12,15 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
 import BrandHeader from "../components/BrandHeader";
 import LoadingState from "../components/LoadingState";
+import AppModal from "../components/AppModal";
 import { useApp } from "../navigation/AppNavigator";
 import { formatRupiah } from "../utils/pricing";
 import { contactAdmin } from "../services/contactService";
 
 /**
  * Status screen — displays saved bookings (History) from AsyncStorage.
+ * Sesi 6: Modal konfirmasi hapus + notifikasi
+ * Sesi 7: FlatList untuk list riwayat, TouchableHighlight dengan onLongPress
  * Sesi 9: AsyncStorage read (Array JSON)
  */
 export default function StatusScreen({ navigation }) {
@@ -24,6 +28,8 @@ export default function StatusScreen({ navigation }) {
   const styles = getStyles(theme);
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [notice, setNotice] = useState(null);
 
   const loadHistory = useCallback(() => {
     setLoading(true);
@@ -44,6 +50,17 @@ export default function StatusScreen({ navigation }) {
     }, [loadHistory]),
   );
 
+  async function handleDelete() {
+    const code = deleteTarget.code;
+    const next = history.filter((item) => item.code !== code);
+    setDeleteTarget(null);
+    setHistory(next);
+    await AsyncStorage.setItem("anterin-history", JSON.stringify(next)).catch(
+      () => {},
+    );
+    setNotice(`Booking ${code} dihapus dari riwayat.`);
+  }
+
   if (loading) {
     return (
       <SafeAreaView style={styles.container}>
@@ -55,81 +72,102 @@ export default function StatusScreen({ navigation }) {
     );
   }
 
+  // Satu item list. Tekan lama (onLongPress) untuk hapus dari riwayat.
+  function renderItem({ item: booking, index }) {
+    return (
+      <TouchableHighlight
+        underlayColor={theme.goldSoft}
+        activeOpacity={0.9}
+        delayLongPress={500}
+        onLongPress={() => setDeleteTarget(booking)}
+        style={styles.cardTouch}
+      >
+        <View style={styles.statusCard}>
+          <View style={styles.statusTop}>
+            <View style={styles.statusPill}>
+              <Text style={styles.statusPillText}>
+                {index === 0 ? "ONGOING" : "COMPLETED"}
+              </Text>
+            </View>
+            <Text style={styles.bookingCode}>{booking.code}</Text>
+          </View>
+
+          <Text style={styles.packageTitle}>{booking.packageName}</Text>
+
+          <View style={styles.statusGrid}>
+            <View style={styles.gridItem}>
+              <Text style={styles.gridLabel}>PENUMPANG</Text>
+              <Text style={styles.gridValue}>{booking.name}</Text>
+            </View>
+            <View style={styles.gridItem}>
+              <Text style={styles.gridLabel}>JADWAL</Text>
+              <Text style={styles.gridValue}>
+                {booking.date} · {booking.time}
+              </Text>
+            </View>
+            <View style={styles.gridItem}>
+              <Text style={styles.gridLabel}>RUTE</Text>
+              <Text style={styles.gridValue}>
+                {booking.pickup} → {booking.destination}
+              </Text>
+            </View>
+            <View style={styles.gridItem}>
+              <Text style={styles.gridLabel}>TOTAL ESTIMASI</Text>
+              <Text style={styles.gridValue}>
+                {formatRupiah(booking.total)}
+              </Text>
+            </View>
+          </View>
+
+          <View style={styles.actionRow}>
+            {index === 0 && (
+              <Pressable
+                style={({ pressed }) => [
+                  styles.primaryButton,
+                  pressed && styles.pressed,
+                ]}
+                onPress={() => contactAdmin()}
+              >
+                <Text style={styles.primaryText}>Chat Admin ↗</Text>
+              </Pressable>
+            )}
+            <Pressable
+              style={({ pressed }) => [
+                styles.outlineButton,
+                pressed && styles.pressed,
+              ]}
+              onPress={() => navigation.navigate("Booking")}
+            >
+              <Text style={styles.outlineText}>Pesan lagi →</Text>
+            </Pressable>
+          </View>
+        </View>
+      </TouchableHighlight>
+    );
+  }
+
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.content}>
-        <BrandHeader navigation={navigation} title="STATUS" />
+      <FlatList
+        data={history}
+        keyExtractor={(item, index) => item.code || String(index)}
+        renderItem={renderItem}
+        contentContainerStyle={styles.content}
+        ListHeaderComponent={
+          <>
+            <BrandHeader navigation={navigation} title="STATUS" />
 
-        <Text style={styles.eyebrow}>RIWAYAT PESANAN</Text>
-        <Text style={styles.pageTitle}>
-          Semua perjalanan,{"\n"}
-          <Text style={styles.goldText}>tercatat rapi.</Text>
-        </Text>
-
-        {history.length > 0 ? (
-          history.map((booking, index) => (
-            <View key={booking.code || index} style={styles.statusCard}>
-              <View style={styles.statusTop}>
-                <View style={styles.statusPill}>
-                  <Text style={styles.statusPillText}>
-                    {index === 0 ? "ONGOING" : "COMPLETED"}
-                  </Text>
-                </View>
-                <Text style={styles.bookingCode}>{booking.code}</Text>
-              </View>
-
-              <Text style={styles.packageTitle}>{booking.packageName}</Text>
-
-              <View style={styles.statusGrid}>
-                <View style={styles.gridItem}>
-                  <Text style={styles.gridLabel}>PENUMPANG</Text>
-                  <Text style={styles.gridValue}>{booking.name}</Text>
-                </View>
-                <View style={styles.gridItem}>
-                  <Text style={styles.gridLabel}>JADWAL</Text>
-                  <Text style={styles.gridValue}>
-                    {booking.date} · {booking.time}
-                  </Text>
-                </View>
-                <View style={styles.gridItem}>
-                  <Text style={styles.gridLabel}>RUTE</Text>
-                  <Text style={styles.gridValue}>
-                    {booking.pickup} → {booking.destination}
-                  </Text>
-                </View>
-                <View style={styles.gridItem}>
-                  <Text style={styles.gridLabel}>TOTAL ESTIMASI</Text>
-                  <Text style={styles.gridValue}>
-                    {formatRupiah(booking.total)}
-                  </Text>
-                </View>
-              </View>
-
-              <View style={styles.actionRow}>
-                {index === 0 && (
-                  <Pressable
-                    style={({ pressed }) => [
-                      styles.primaryButton,
-                      pressed && styles.pressed,
-                    ]}
-                    onPress={() => contactAdmin()}
-                  >
-                    <Text style={styles.primaryText}>Chat Admin ↗</Text>
-                  </Pressable>
-                )}
-                <Pressable
-                  style={({ pressed }) => [
-                    styles.outlineButton,
-                    pressed && styles.pressed,
-                  ]}
-                  onPress={() => navigation.navigate("Booking")}
-                >
-                  <Text style={styles.outlineText}>Pesan lagi →</Text>
-                </Pressable>
-              </View>
-            </View>
-          ))
-        ) : (
+            <Text style={styles.eyebrow}>RIWAYAT PESANAN</Text>
+            <Text style={styles.pageTitle}>
+              Semua perjalanan,{"\n"}
+              <Text style={styles.goldText}>tercatat rapi.</Text>
+            </Text>
+            {history.length > 0 && (
+              <Text style={styles.hint}>Tekan lama kartu untuk menghapus.</Text>
+            )}
+          </>
+        }
+        ListEmptyComponent={
           <View style={styles.emptyState}>
             <Text style={styles.emptyTitle}>Belum ada riwayat</Text>
             <Text style={styles.emptyBody}>
@@ -145,8 +183,25 @@ export default function StatusScreen({ navigation }) {
               <Text style={styles.primaryText}>Mulai booking →</Text>
             </Pressable>
           </View>
-        )}
-      </ScrollView>
+        }
+      />
+
+      <AppModal
+        visible={deleteTarget !== null}
+        type="confirmation"
+        title="Hapus booking?"
+        message={`Booking ${deleteTarget?.code} akan dihapus dari riwayat di HP ini.`}
+        confirmText="Hapus"
+        onConfirm={handleDelete}
+        onClose={() => setDeleteTarget(null)}
+      />
+      <AppModal
+        visible={notice !== null}
+        type="notification"
+        title="Riwayat diperbarui"
+        message={notice}
+        onClose={() => setNotice(null)}
+      />
     </SafeAreaView>
   );
 }
@@ -171,14 +226,15 @@ const getStyles = (theme) =>
       marginBottom: 16,
     },
     goldText: { color: theme.gold },
+    cardTouch: { borderRadius: 8, marginBottom: 20 },
     statusCard: {
       backgroundColor: theme.card,
       borderLeftWidth: 4,
       borderLeftColor: theme.gold,
       padding: 22,
-      marginBottom: 20,
       borderRadius: 8,
     },
+    hint: { color: theme.muted, fontSize: 11, marginBottom: 4 },
     statusTop: {
       flexDirection: "row",
       justifyContent: "space-between",

@@ -9,8 +9,9 @@ import { formatRupiah } from "../utils/pricing";
  * Package card with liquid glass styling when selected.
  * Unselected: clean light card.
  * Selected: navy gradient + blur shimmer.
+ * Sesi 7: Pressable — onPress pilih paket, onLongPress (opsional) lihat detail.
  */
-export default function PackageCard({ item, selected, onSelect }) {
+export default function PackageCard({ item, selected, onSelect, onLongPress }) {
   const { theme } = useApp();
   const styles = getStyles(theme);
   return (
@@ -21,6 +22,8 @@ export default function PackageCard({ item, selected, onSelect }) {
         pressed && styles.pressed,
       ]}
       onPress={() => onSelect(item)}
+      onLongPress={onLongPress ? () => onLongPress(item) : undefined}
+      delayLongPress={400}
     >
       {/* Glass overlay on selected */}
       {selected && Platform.OS === "ios" && (

@@ -1,19 +1,32 @@
-import React from "react";
-import { View, Text, Image, StyleSheet, Platform } from "react-native";
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  Platform,
+  TouchableOpacity,
+} from "react-native";
 import { BlurView } from "expo-blur";
 import { useApp } from "../navigation/AppNavigator";
 
 /**
  * Driver profile card with liquid glass styling.
  * Shows photo, name, rating, badge, bio, and skill tags.
+ * Sesi 7: TouchableOpacity — tap untuk buka/tutup profil lengkap driver.
  */
 export default function DriverCard({ driver }) {
   const { theme } = useApp();
   const styles = getStyles(theme);
   const stars = Math.round(driver.rating);
+  const [expanded, setExpanded] = useState(false);
 
   return (
-    <View style={styles.card}>
+    <TouchableOpacity
+      style={styles.card}
+      activeOpacity={0.8}
+      onPress={() => setExpanded((prev) => !prev)}
+    >
       {/* Glass blur layer */}
       {Platform.OS === "ios" && (
         <BlurView intensity={40} tint="light" style={StyleSheet.absoluteFill} />
@@ -45,21 +58,28 @@ export default function DriverCard({ driver }) {
             <Text style={styles.trips}> · {driver.trips} trip</Text>
           </View>
 
-          <Text style={styles.bio}>{driver.bio}</Text>
+          <Text style={styles.bio} numberOfLines={expanded ? undefined : 2}>
+            {driver.bio}
+          </Text>
 
-          {/* Skill tags */}
-          <View style={styles.skillRow}>
-            {driver.skills.map((skill) => (
-              <View key={skill} style={styles.skillTag}>
-                <Text style={styles.skillText}>{skill}</Text>
-              </View>
-            ))}
-          </View>
+          {/* Skill tags — tampil saat kartu dibuka */}
+          {expanded && (
+            <View style={styles.skillRow}>
+              {driver.skills.map((skill) => (
+                <View key={skill} style={styles.skillTag}>
+                  <Text style={styles.skillText}>{skill}</Text>
+                </View>
+              ))}
+            </View>
+          )}
 
-          <Text style={styles.exp}>{driver.experience} pengalaman</Text>
+          <Text style={styles.exp}>
+            {driver.experience} pengalaman ·{" "}
+            {expanded ? "Tutup profil ▴" : "Lihat profil ▾"}
+          </Text>
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }
 

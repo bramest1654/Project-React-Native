@@ -5,7 +5,6 @@ import {
   ScrollView,
   Pressable,
   Modal,
-  Alert,
   StyleSheet,
   SafeAreaView,
   Platform,
@@ -19,9 +18,11 @@ import BookingField from "../components/BookingField";
 import PriceSummary from "../components/PriceSummary";
 import AvailabilityCard from "../components/AvailabilityCard";
 import LoadingState from "../components/LoadingState";
+import AppModal from "../components/AppModal";
+import BookingProgress from "../components/BookingProgress";
 import { useApp } from "../navigation/AppNavigator";
 import { formatRupiah, calculateTotal } from "../utils/pricing";
-import { validateBookingForm } from "../utils/validation";
+import { validateBookingForm, getFormProgress } from "../utils/validation";
 import { createBookingObject, INITIAL_FORM } from "../utils/booking";
 import { contactAdmin } from "../services/contactService";
 import { submitBookingAPI } from "../services/api";
@@ -33,7 +34,8 @@ const DRAFT_KEY = "anterin-draft";
  * Sesi 3: TextInput, Picker, DateTimePicker, validation
  * Sesi 4: Flexbox layout
  * Sesi 5: StyleSheet, design system
- * Sesi 6: Modal, ActivityIndicator, Alert
+ * Sesi 6: Modal (alert / confirmation / notification), ActivityIndicator,
+ *         progress bar (react-native-progress)
  * Sesi 7: Pressable with visual feedback
  * Sesi 9: AsyncStorage for draft persistence
  */
@@ -50,6 +52,8 @@ export default function BookingScreen({ navigation, route }) {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [saving, setSaving] = useState(false);
+  // dialog = { type, title, message } untuk AppModal, null kalau tertutup
+  const [dialog, setDialog] = useState(null);
 
   // Receive pickup location from Map
   useEffect(() => {
@@ -69,6 +73,13 @@ export default function BookingScreen({ navigation, route }) {
         if (stored) {
           const parsed = JSON.parse(stored);
           setForm((prev) => ({ ...prev, ...parsed }));
+          if (parsed.name) {
+            setDialog({
+              type: "notification",
+              title: "Draft dipulihkan",
+              message: "Data booking terakhir kamu sudah diisi otomatis.",
+            });
+          }
         }
       })
       .catch(() => {});
@@ -106,17 +117,27 @@ export default function BookingScreen({ navigation, route }) {
     const result = validateBookingForm(form);
     if (!result.isValid) {
       setErrors(result.errors);
-      Alert.alert(
-        "Form belum lengkap",
-        "Mohon lengkapi field yang ditandai merah.",
-      );
+      setDialog({
+        type: "alert",
+        title: "Form belum lengkap",
+        message: "Mohon lengkapi field yang ditandai merah.",
+      });
       return;
     }
     setErrors({});
     setStep(2);
   }
 
+  function askConfirm() {
+    setDialog({
+      type: "confirmation",
+      title: "Kirim booking?",
+      message: `Paket ${selectedPackage.name} untuk ${form.date} pukul ${form.time}, total ${formatRupiah(total)}.`,
+    });
+  }
+
   async function handleConfirm() {
+    setDialog(null);
     setSaving(true);
     const bookingObj = createBookingObject(form, selectedPackage, total);
     try {
@@ -134,7 +155,12 @@ export default function BookingScreen({ navigation, route }) {
       setModalOpen(true);
       await AsyncStorage.removeItem(DRAFT_KEY);
     } catch (err) {
-      Alert.alert("Error", "Gagal mengirim booking ke server.");
+      setDialog({
+        type: "alert",
+        title: "Koneksi gagal",
+        message:
+          "Booking gagal dikirim ke server. Cek koneksi internet lalu coba lagi.",
+      });
     } finally {
       setSaving(false);
     }
@@ -156,6 +182,18 @@ export default function BookingScreen({ navigation, route }) {
     }
   }
 
+  const dialogModal = (
+    <AppModal
+      visible={dialog !== null}
+      type={dialog?.type}
+      title={dialog?.title}
+      message={dialog?.message}
+      confirmText="Kirim"
+      onConfirm={handleConfirm}
+      onClose={() => setDialog(null)}
+    />
+  );
+
   // --- Step 1: Form ---
   if (step === 1) {
     return (
@@ -169,14 +207,8 @@ export default function BookingScreen({ navigation, route }) {
             <Text style={styles.goldText}>lebih mudah.</Text>
           </Text>
 
-          {/* Progress indicator */}
-          <View style={styles.stepper}>
-            <View style={[styles.stepDot, styles.stepActive]} />
-            <Text style={[styles.stepText, styles.stepActive]}>01 Detail</Text>
-            <View style={styles.stepLine} />
-            <View style={styles.stepDot} />
-            <Text style={styles.stepText}>02 Review</Text>
-          </View>
+          {/* Progress bar — seberapa lengkap form sudah diisi */}
+          <BookingProgress step={1} progress={getFormProgress(form)} />
 
           {/* Package selector */}
           <Text style={styles.sectionLabel}>PILIH PAKET</Text>
@@ -396,6 +428,7 @@ export default function BookingScreen({ navigation, route }) {
             <Text style={styles.primaryText}>Review pesanan →</Text>
           </Pressable>
         </ScrollView>
+        {dialogModal}
       </SafeAreaView>
     );
   }
@@ -412,14 +445,7 @@ export default function BookingScreen({ navigation, route }) {
           <Text style={styles.goldText}>lebih mudah.</Text>
         </Text>
 
-        {/* Progress indicator */}
-        <View style={styles.stepper}>
-          <View style={[styles.stepDot, styles.stepActive]} />
-          <Text style={[styles.stepText, styles.stepActive]}>01 Detail</Text>
-          <View style={[styles.stepLine, styles.stepLineActive]} />
-          <View style={[styles.stepDot, styles.stepActive]} />
-          <Text style={[styles.stepText, styles.stepActive]}>02 Review</Text>
-        </View>
+        <BookingProgress step={2} progress={1} />
 
         {/* Review card */}
         <View style={styles.reviewCard}>
@@ -479,7 +505,7 @@ export default function BookingScreen({ navigation, route }) {
               styles.primaryButton,
               pressed && styles.pressed,
             ]}
-            onPress={handleConfirm}
+            onPress={askConfirm}
             disabled={saving}
           >
             {saving ? (
@@ -556,6 +582,7 @@ export default function BookingScreen({ navigation, route }) {
           </View>
         </View>
       </Modal>
+      {dialogModal}
     </SafeAreaView>
   );
 }
@@ -580,31 +607,6 @@ const getStyles = (theme) =>
       marginBottom: 20,
     },
     goldText: { color: theme.gold },
-    stepper: {
-      flexDirection: "row",
-      alignItems: "center",
-      gap: 8,
-      marginBottom: 28,
-    },
-    stepDot: {
-      width: 8,
-      height: 8,
-      borderRadius: 4,
-      backgroundColor: theme.line,
-    },
-    stepActive: { backgroundColor: theme.gold, color: theme.text },
-    stepText: {
-      color: theme.muted,
-      fontSize: 10,
-      fontWeight: "700",
-      textTransform: "uppercase",
-    },
-    stepLine: {
-      flex: 1,
-      height: 1,
-      backgroundColor: theme.line,
-    },
-    stepLineActive: { backgroundColor: theme.gold },
     sectionLabel: {
       color: theme.text,
       fontSize: 13,

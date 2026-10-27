@@ -43,3 +43,21 @@ export function validateBookingForm(form) {
     errors,
   };
 }
+
+/**
+ * Hitung progres pengisian form (0 - 1) untuk progress bar.
+ * Sesi 6: Measuring Progress
+ */
+export const REQUIRED_FIELDS = [
+  "name",
+  "phone",
+  "date",
+  "destination",
+  "pickup",
+];
+
+export function getFormProgress(form) {
+  const { errors } = validateBookingForm(form);
+  const filled = REQUIRED_FIELDS.filter((field) => !errors[field]).length;
+  return filled / REQUIRED_FIELDS.length;
+}

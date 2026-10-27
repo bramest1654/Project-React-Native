@@ -1,4 +1,4 @@
-import { validateBookingForm } from '../src/utils/validation';
+import { validateBookingForm, getFormProgress } from '../src/utils/validation';
 
 describe('Booking Form Validation', () => {
   const validForm = {
@@ -32,5 +32,15 @@ describe('Booking Form Validation', () => {
     const result = validateBookingForm({ ...validForm, date: '2020-01-01' });
     expect(result.isValid).toBe(false);
     expect(result.errors.date).toBeDefined();
+  });
+
+  it('form progress is 0 for empty form and 1 for valid form', () => {
+    expect(getFormProgress({ passengers: '2' })).toBe(0);
+    expect(getFormProgress(validForm)).toBe(1);
+  });
+
+  it('form progress counts only valid required fields', () => {
+    const partial = { ...validForm, destination: '', pickup: '' };
+    expect(getFormProgress(partial)).toBeCloseTo(3 / 5);
   });
 });

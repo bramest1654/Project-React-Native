@@ -36,11 +36,16 @@ Project ini dirancang sebagai prototype venture creation sekaligus implementasi 
 4. **Sesi 5 (StyleSheet, Central Color Constants)**
    - Implementasi pada: `src/theme/` (colors, spacing, typography).
 
-5. **Sesi 6 (ActivityIndicator, Modal, Alert)**
-   - Implementasi pada: `LoadingState.jsx`, modal konfirmasi di `BookingScreen.jsx`.
+5. **Sesi 6 (Progress and Modal)**
+   - Progress: `ActivityIndicator` di `LoadingState.jsx`.
+   - Measuring Progress: progress bar `react-native-progress` di `BookingProgress.jsx` (persentase form booking yang sudah terisi).
+   - Modal: `AppModal.jsx` dengan 3 tipe informasi — alert (form belum lengkap, koneksi gagal), confirmation (kirim booking, hapus riwayat, preview paket), notification (draft dipulihkan, riwayat dihapus; hilang sendiri).
 
-6. **Sesi 7 (Pressable, onPress, Interaksi)**
-   - Implementasi pada: Seluruh tombol dengan efek visual `opacity` saat ditekan.
+6. **Sesi 7 (Handling Gestures)**
+   - Touchable: `TouchableOpacity` di `DriverCard.jsx` (tap buka/tutup profil), `TouchableHighlight` + `onLongPress` di `StatusScreen.jsx` (tekan lama untuk hapus riwayat).
+   - Pressable: semua tombol, plus `onLongPress` di `PackageCard.jsx` untuk preview paket.
+   - ScrollView events di `HomeScreen.jsx`: `onScroll` (tombol kembali ke atas), `onScrollBeginDrag`/`onScrollEndDrag`, `onMomentumScrollEnd` (indikator titik list armada).
+   - `FlatList` untuk list armada (horizontal) dan riwayat booking.
 
 7. **Sesi 8 (Animated API)**
    - Implementasi pada: Animasi fade-in dan slide-up di `HomeScreen.jsx`.

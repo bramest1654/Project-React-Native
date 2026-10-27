@@ -6,7 +6,6 @@ import {
   StyleSheet,
   SafeAreaView,
   ScrollView,
-  Platform,
 } from "react-native";
 import { useTheme } from "../navigation/AppNavigator";
 import BrandHeader from "../components/BrandHeader";
