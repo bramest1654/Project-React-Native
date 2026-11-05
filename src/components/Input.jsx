@@ -1,9 +1,8 @@
 import React from "react";
 import { View, Text, TextInput, StyleSheet } from "react-native";
-import { useTheme } from "../navigation/AppNavigator";
+import theme from "../theme/colors";
 
 function Input(props) {
-  const theme = useTheme();
   const styles = getStyles(theme);
 
   return (

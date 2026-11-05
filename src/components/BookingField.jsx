@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, TextInput, StyleSheet } from "react-native";
-import { useApp } from "../navigation/AppNavigator";
+import theme from "../theme/colors";
 
 export default function BookingField({
   label,
@@ -11,7 +11,6 @@ export default function BookingField({
   multiline,
   error,
 }) {
-  const { theme } = useApp();
   const styles = getStyles(theme);
   return (
     <View style={styles.container}>

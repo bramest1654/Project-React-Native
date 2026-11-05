@@ -1,9 +1,8 @@
 import React from "react";
 import { View, Text, Image, StyleSheet } from "react-native";
-import { useApp } from "../navigation/AppNavigator";
+import theme from "../theme/colors";
 
 export default function DriverCard({ driver }) {
-  const { theme } = useApp();
   const styles = getStyles(theme);
   const stars = Math.round(driver.rating);
 

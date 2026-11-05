@@ -1,9 +1,8 @@
 import React from "react";
 import { View, Text, ActivityIndicator, StyleSheet } from "react-native";
-import { useApp } from "../navigation/AppNavigator";
+import theme from "../theme/colors";
 
 export default function LoadingState({ message = "Memuat..." }) {
-  const { theme } = useApp();
   const styles = getStyles(theme);
   return (
     <View style={styles.container}>

@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
-import { useApp } from "../navigation/AppNavigator";
+import theme from "../theme/colors";
 import {
   formatRupiah,
   calculateExtraHours,
@@ -13,7 +13,6 @@ export default function PriceSummary({
   tripType,
   total,
 }) {
-  const { theme } = useApp();
   const styles = getStyles(theme);
   const extra = calculateExtraHours(extraHours);
   const surcharge = calculateTripSurcharge(tripType);

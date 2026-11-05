@@ -9,10 +9,11 @@ import {
 } from "react-native";
 import BrandHeader from "../components/BrandHeader";
 import { useApp } from "../navigation/AppNavigator";
+import theme from "../theme/colors";
 import { formatRupiah } from "../utils/pricing";
 
 export default function StatusScreen({ navigation }) {
-  const { theme, booking } = useApp();
+  const { booking } = useApp();
   const styles = getStyles(theme);
   const history = booking ? [booking] : [];
 

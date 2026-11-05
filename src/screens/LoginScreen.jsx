@@ -7,13 +7,12 @@ import {
   SafeAreaView,
   ScrollView,
 } from "react-native";
-import { useTheme } from "../navigation/AppNavigator";
+import theme from "../theme/colors";
 import BrandHeader from "../components/BrandHeader";
 import GlassCard from "../components/GlassCard";
 import Input from "../components/Input";
 
 export default function LoginScreen({ navigation }) {
-  const theme = useTheme();
   const styles = getStyles(theme);
 
   const [username, setUsername] = useState("");

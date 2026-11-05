@@ -14,10 +14,11 @@ import GlassCard from "../components/GlassCard";
 import PackageCard from "../components/PackageCard";
 import DriverCard from "../components/DriverCard";
 import drivers from "../data/drivers";
-import { useApp } from "../navigation/AppNavigator";
+import packages from "../data/packages";
+import theme from "../theme/colors";
 
 export default function HomeScreen({ navigation }) {
-  const { theme, packages, selectedPackage, setSelectedPackage } = useApp();
+
   const styles = getStyles(theme);
 
   return (
@@ -212,8 +213,8 @@ export default function HomeScreen({ navigation }) {
               item={item}
               selected={false}
               onSelect={(item) => {
-                setSelectedPackage(item);
-                navigation.navigate("Booking");
+
+                navigation.navigate("Booking", { packageId: item.id });
               }}
             />
           ))}

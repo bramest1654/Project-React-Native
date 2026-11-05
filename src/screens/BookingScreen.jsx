@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -16,12 +16,12 @@ import BrandHeader from "../components/BrandHeader";
 import BookingField from "../components/BookingField";
 import PriceSummary from "../components/PriceSummary";
 import { useApp } from "../navigation/AppNavigator";
+import theme from "../theme/colors";
 import { formatRupiah, calculateTotal } from "../utils/pricing";
 import { validateBookingForm } from "../utils/validation";
 import { createBookingObject, INITIAL_FORM } from "../utils/booking";
 
 export default function BookingScreen({ navigation }) {
-  const { theme } = useApp();
   const styles = getStyles(theme);
   const { packages, selectedPackage, setSelectedPackage, setBooking } =
     useApp();
@@ -33,19 +33,16 @@ export default function BookingScreen({ navigation }) {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
 
-  const updateField = useCallback(
-    (field, value) => {
-      setForm((prev) => ({ ...prev, [field]: value }));
-      if (errors[field]) {
-        setErrors((prev) => {
-          const next = { ...prev };
-          delete next[field];
-          return next;
-        });
-      }
-    },
-    [errors],
-  );
+  function updateField(field, value) {
+    setForm((prev) => ({ ...prev, [field]: value }));
+    if (errors[field]) {
+      setErrors((prev) => {
+        const next = { ...prev };
+        delete next[field];
+        return next;
+      });
+    }
+  }
 
   const total = calculateTotal(
     selectedPackage.price,

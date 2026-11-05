@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -9,10 +9,10 @@ import {
 } from "react-native";
 import BrandHeader from "../components/BrandHeader";
 import GlassCard from "../components/GlassCard";
-import { useApp } from "../navigation/AppNavigator";
+import theme from "../theme/colors";
 
 export default function SettingsScreen({ navigation }) {
-  const { isDarkMode, toggleTheme, language, setLanguage, theme } = useApp();
+  const [language, setLanguage] = useState("id");
   const styles = getStyles(theme);
 
   const isIndo = language === "id";
@@ -25,27 +25,6 @@ export default function SettingsScreen({ navigation }) {
 
         <GlassCard style={styles.card}>
           <Text style={styles.eyebrow}>PREFERENSI APLIKASI</Text>
-
-          <View style={styles.settingRow}>
-            <View style={styles.settingInfo}>
-              <Text style={styles.settingTitle}>
-                {isIndo ? "Mode Gelap (Dark Mode)" : "Dark Mode"}
-              </Text>
-              <Text style={styles.settingDesc}>
-                {isIndo
-                  ? "Ubah tampilan menjadi biru dongker ala Anterin."
-                  : "Switch appearance to Anterin Navy."}
-              </Text>
-            </View>
-            <Switch
-              value={isDarkMode}
-              onValueChange={toggleTheme}
-              trackColor={{ false: theme.line, true: theme.gold }}
-              thumbColor={theme.white}
-            />
-          </View>
-
-          <View style={styles.divider} />
 
           <View style={styles.settingRow}>
             <View style={styles.settingInfo}>
@@ -97,5 +76,4 @@ const getStyles = (theme) =>
       marginBottom: 4,
     },
     settingDesc: { color: theme.muted, fontSize: 12, lineHeight: 18 },
-    divider: { height: 1, backgroundColor: theme.line, my: 8 },
   });

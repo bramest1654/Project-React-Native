@@ -7,10 +7,9 @@ import {
   Platform,
   Modal,
 } from "react-native";
-import { useApp } from "../navigation/AppNavigator";
+import theme from "../theme/colors";
 
 export default function BrandHeader({ navigation, title, showMenu = true }) {
-  const { theme } = useApp();
   const styles = getStyles(theme);
   const [menuOpen, setMenuOpen] = useState(false);
 

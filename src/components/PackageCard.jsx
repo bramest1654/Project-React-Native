@@ -1,10 +1,9 @@
 import React from "react";
 import { View, Text, Pressable, StyleSheet } from "react-native";
-import { useApp } from "../navigation/AppNavigator";
+import theme from "../theme/colors";
 import { formatRupiah } from "../utils/pricing";
 
 export default function PackageCard({ item, selected, onSelect }) {
-  const { theme } = useApp();
   const styles = getStyles(theme);
   return (
     <Pressable

@@ -1,9 +1,8 @@
 import React from "react";
 import { View, StyleSheet, Platform } from "react-native";
-import { useApp } from "../navigation/AppNavigator";
+import theme from "../theme/colors";
 
 export default function GlassCard({ children, style, border = true }) {
-  const { theme } = useApp();
   const styles = getStyles(theme);
   if (Platform.OS === "android") {
     return (
