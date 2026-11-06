@@ -15,16 +15,18 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import BrandHeader from "../components/BrandHeader";
 import BookingField from "../components/BookingField";
 import PriceSummary from "../components/PriceSummary";
-import { useApp } from "../navigation/AppNavigator";
+import packages from "../data/packages";
 import theme from "../theme/colors";
 import { formatRupiah, calculateTotal } from "../utils/pricing";
 import { validateBookingForm } from "../utils/validation";
 import { createBookingObject, INITIAL_FORM } from "../utils/booking";
 
-export default function BookingScreen({ navigation }) {
+export default function BookingScreen({ navigation, route }) {
   const styles = getStyles(theme);
-  const { packages, selectedPackage, setSelectedPackage, setBooking } =
-    useApp();
+  const packageId = route.params?.packageId;
+  const [selectedPackage, setSelectedPackage] = useState(
+    packages.find((p) => p.id === packageId) || packages[0]
+  );
   const [form, setForm] = useState(INITIAL_FORM);
   const [step, setStep] = useState(1);
   const [errors, setErrors] = useState({});
@@ -66,7 +68,7 @@ export default function BookingScreen({ navigation }) {
 
   function handleConfirm() {
     const bookingObj = createBookingObject(form, selectedPackage, total);
-    setBooking(bookingObj);
+
     setConfirmedBooking(bookingObj);
     setModalOpen(true);
   }
@@ -445,7 +447,7 @@ export default function BookingScreen({ navigation }) {
             <Pressable
               onPress={() => {
                 setModalOpen(false);
-                navigation.navigate("Status");
+                navigation.navigate("Status", { booking: confirmedBooking });
               }}
               style={({ pressed }) => pressed && styles.pressed}
             >

@@ -8,12 +8,11 @@ import {
   SafeAreaView,
 } from "react-native";
 import BrandHeader from "../components/BrandHeader";
-import { useApp } from "../navigation/AppNavigator";
 import theme from "../theme/colors";
 import { formatRupiah } from "../utils/pricing";
 
-export default function StatusScreen({ navigation }) {
-  const { booking } = useApp();
+export default function StatusScreen({ navigation, route }) {
+  const booking = route.params?.booking;
   const styles = getStyles(theme);
   const history = booking ? [booking] : [];
 
