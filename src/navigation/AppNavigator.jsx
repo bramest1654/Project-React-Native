@@ -1,9 +1,8 @@
-import React, { createContext, useContext, useState } from "react";
+import React from "react";
 import { View, StyleSheet, StatusBar } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import packagesData from "../data/packages";
 import HomeScreen from "../screens/HomeScreen";
 import BookingScreen from "../screens/BookingScreen";
 import StatusScreen from "../screens/StatusScreen";
@@ -11,10 +10,7 @@ import SettingsScreen from "../screens/SettingsScreen";
 import LoginScreen from "../screens/LoginScreen";
 import theme from "../theme/colors";
 
-const AppContext = createContext(null);
-export function useApp() {
-  return useContext(AppContext);
-}
+
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -38,19 +34,8 @@ function TabNavigator() {
 }
 
 export default function AppNavigator() {
-  const [selectedPackage, setSelectedPackage] = useState(packagesData[0]);
-  const [booking, setBooking] = useState(null);
-
-  const contextValue = {
-    packages: packagesData,
-    selectedPackage,
-    setSelectedPackage,
-    booking,
-    setBooking,
-  };
-
   return (
-    <AppContext.Provider value={contextValue}>
+    <>
       <StatusBar barStyle="dark-content" />
       <NavigationContainer>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -59,6 +44,6 @@ export default function AppNavigator() {
           <Stack.Screen name="Settings" component={SettingsScreen} />
         </Stack.Navigator>
       </NavigationContainer>
-    </AppContext.Provider>
+    </>
   );
 }
