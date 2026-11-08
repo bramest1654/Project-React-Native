@@ -15,11 +15,20 @@ import Input from "../components/Input";
 export default function LoginScreen({ navigation }) {
   const styles = getStyles(theme);
 
-  const [username, setUsername] = useState("");
+    const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   function handleLogin() {
-    console.log("Login attempt:", { username, password });
+    if (username === "") {
+      setError("Username wajib diisi");
+      return;
+    }
+    if (password.length < 6) {
+      setError("Password minimal 6 karakter");
+      return;
+    }
+    setError("");
     navigation.replace("MainTabs");
   }
 
@@ -60,7 +69,7 @@ export default function LoginScreen({ navigation }) {
             onChangeText={setPassword}
             value={password}
           />
-
+                   {error !== "" && <Text style={styles.errorText}>{error}</Text>}
           <Pressable
             style={({ pressed }) => [
               styles.loginButton,
@@ -85,6 +94,10 @@ const getStyles = (theme) =>
     container: {
       flex: 1,
       backgroundColor: theme.paper,
+    },
+        errorText: {
+      color: "#D64545",
+      marginBottom: 12,
     },
     scrollContent: {
       flexGrow: 1,
