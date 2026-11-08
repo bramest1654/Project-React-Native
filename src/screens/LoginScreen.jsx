@@ -15,13 +15,19 @@ import Input from "../components/Input";
 export default function LoginScreen({ navigation }) {
   const styles = getStyles(theme);
 
-    const [username, setUsername] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-
+  const [mode, setMode] = useState("login");
+  const [name, setName] = useState("");
+    
   function handleLogin() {
+    if(mode === "register" && name === "") {
+      setError("Nama Anda wajib diisi")
+      return;
+    }
     if (username === "") {
-      setError("Username wajib diisi");
+      setError("Username Anda wajib diisi");
       return;
     }
     if (password.length < 6) {
@@ -51,7 +57,18 @@ export default function LoginScreen({ navigation }) {
         </View>
 
         <GlassCard style={styles.formCard}>
-          <Text style={styles.eyebrow}>MASUK KE AKUN</Text>
+          <Text style={styles.eyebrow}>
+            {mode === "login" ? "MASUK KE AKUN" : "DAFTAR AKUN BARU"}
+          </Text>
+
+          {mode === "register" && (
+            <Input
+              label="Nama Lengkap"
+              placeholder="Masukkan nama lengkap Anda"
+              onChangeText={setName}
+              value={name}
+            />
+          )}
 
           <Input
             label="Username"
@@ -61,7 +78,6 @@ export default function LoginScreen({ navigation }) {
             autoCapitalize="none"
             autoCorrect={false}
           />
-
           <Input
             label="Password"
             placeholder="Masukkan password Anda"
@@ -69,7 +85,7 @@ export default function LoginScreen({ navigation }) {
             onChangeText={setPassword}
             value={password}
           />
-                   {error !== "" && <Text style={styles.errorText}>{error}</Text>}
+          {error !== "" && <Text style={styles.errorText}>{error}</Text>}
           <Pressable
             style={({ pressed }) => [
               styles.loginButton,
@@ -77,7 +93,21 @@ export default function LoginScreen({ navigation }) {
             ]}
             onPress={handleLogin}
           >
-            <Text style={styles.loginButtonText}>Masuk</Text>
+            <Text style={styles.loginButtonText}>
+              {mode === "login" ? "Masuk" : "Daftar"}
+            </Text>
+          </Pressable>
+          <Pressable
+            onPress={() => {
+              setMode(mode === "login" ? "register" : "login");
+              setError("");
+            }}
+          >
+            <Text style={styles.switchText}>
+              {mode === "login"
+                ? "Belum punya akun? Daftar"
+                : "Sudah punya akun? Masuk"}
+            </Text>
           </Pressable>
         </GlassCard>
 
@@ -96,9 +126,12 @@ const getStyles = (theme) =>
       backgroundColor: theme.paper,
     },
         errorText: {
-      color: "#D64545",
-      marginBottom: 12,
-    },
+          switchText: {
+      color: theme.text,
+      textAlign: "center",
+      marginTop: 16,
+    }
+  },
     scrollContent: {
       flexGrow: 1,
       paddingHorizontal: 20,
