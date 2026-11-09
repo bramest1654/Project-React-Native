@@ -7,6 +7,7 @@ import HomeScreen from "../screens/HomeScreen";
 import BookingScreen from "../screens/BookingScreen";
 import StatusScreen from "../screens/StatusScreen";
 import SettingsScreen from "../screens/SettingsScreen";
+import DetailScreen from "../screens/DetailScreen";
 import LoginScreen from "../screens/LoginScreen";
 import theme from "../theme/colors";
 
@@ -42,6 +43,7 @@ export default function AppNavigator() {
           <Stack.Screen name="Login" component={LoginScreen} />
           <Stack.Screen name="MainTabs" component={TabNavigator} />
           <Stack.Screen name="Settings" component={SettingsScreen} />
+          <Stack.Screen name= "Detail" component = {DetailScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </>

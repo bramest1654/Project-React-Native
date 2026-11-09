@@ -214,7 +214,7 @@ export default function HomeScreen({ navigation }) {
               selected={false}
               onSelect={(item) => {
 
-                navigation.navigate("Booking", { packageId: item.id });
+                navigation.navigate("Detail", { packageId: item.id });
               }}
             />
           ))}
