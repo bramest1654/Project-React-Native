@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, Pressable, StyleSheet } from "react-native";
+import { View, Text, Image,  Pressable, StyleSheet } from "react-native";
 import theme from "../theme/colors";
 import { formatRupiah } from "../utils/pricing";
 
@@ -17,8 +17,12 @@ export default function PackageCard({ item, selected, onSelect }) {
       {selected && <View style={styles.goldAccent} />}
 
       <View style={[styles.shineLine, selected && styles.shineLineSelected]} />
-
       <View style={styles.inner}>
+      <Image
+          source={item.image}
+          style={styles.image}
+          resizeMode="cover"
+        />
         <View style={styles.topRow}>
           <View style={[styles.badge, selected && styles.badgeSelected]}>
             <Text
@@ -105,6 +109,7 @@ const getStyles = (theme) =>
       backgroundColor: "rgba(255,255,255,0.25)",
     },
     inner: { padding: 20, position: "relative", zIndex: 1 },
+        image: { width: "100%", height: 140, borderRadius: 12, marginBottom: 12 },
     topRow: {
       flexDirection: "row",
       justifyContent: "space-between",

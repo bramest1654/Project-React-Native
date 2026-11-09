@@ -2,6 +2,7 @@ const packages = [
   {
     id: "essential",
     name: "Anterin Essential",
+        image: require("../../assets/hero_zenix.jpg"),
     label: "BEST VALUE",
     price: 1050000,
     description:
@@ -16,6 +17,7 @@ const packages = [
   {
     id: "signature",
     name: "Anterin Signature",
+        image: require("../../assets/hero_zenix_transparent.png"),
     label: "VVIP PRIORITY",
     price: 1250000,
     description:
@@ -31,6 +33,8 @@ const packages = [
   {
     id: "grand-tour",
     name: "Anterin Grand Tour",
+    image: require("../../assets/hero_zenix_transparent.png"),
+    label: "VVIP PRIORITY",
     label: "LONG TRIP",
     price: 1400000,
     description: "Partner perjalanan luar kota dengan driver yang paham medan.",
