@@ -94,35 +94,47 @@ const pkg = packages.find((p) => p.id === packageId) || packages[0];
 ## Analisis Kebutuhan
 
 ### Masalah
-(Masalah apa yang mau diselesaikan Anterin?)
+Anterin ini dibuat karena yang saya lihat, usaha rental lain, terutama di Semarang, hanya sekadar mengantar penumpang dari titik A ke titik B saja. Dari segi pelayanan, sopirnya mungkin kurang memberikan kesan yang positif, seperti tidak memberikan snack atau minuman, kurang ramah, dan mobilnya bau, sehingga penumpang menjadi kurang merasa nyaman. Oleh karena itu, saya menghadirkan Anterin yang mengedepankan pelayanan maksimal sehingga penumpang merasa nyaman, karena sopir kami sudah berpengalaman dalam rute dan sudah dilatih sesuai SOP.
 
 ### Target Pengguna
-(Siapa yang pakai? Umur, situasi, kebutuhan mereka.)
+Target pengguna Anterin bisa bervariasi, karena kami tidak hanya membuka paket khusus VIP saja:
+- **Anterin Signature (VVIP Priority)**: ditujukan ke konsumen atau klien bos, atau tamu dari luar kota yang berkepentingan rapat ke hotel.
+- **Anterin Essential**: ditujukan ke keluarga untuk traveling dengan rute dalam kota.
+- **Anterin Grand Tour (Long Trip)**: ditujukan ke keluarga untuk traveling ke luar kota.
+
+Tempat tujuan bisa dipilih secara manual, atau bisa request langsung jika ingin menambah rute, asalkan masih dalam waktu yang sudah ditentukan.
 
 ### Kebutuhan Pengguna
-1. 
-2. 
-3. 
-4. 
-5. 
+1. **Desain UI yang elegan dan berkelas, tetapi tidak ribet**, sehingga lebih mudah dipahami saat dipakai (user friendly).
+2. **Harga yang jelas dan kompetitif.** Harga bersifat sensitif. Kalau harganya lebih mahal karena embel-embel "VIP Premium" padahal usahanya masih merintis dari awal, orang-orang bakal pindah haluan. Maka dari itu kami memberi harga yang kompetitif, yang artinya disetel di bawah harga kompetitor.
+3. **Pilihan paket sesuai kebutuhan konsumen**, yaitu 3 paket: Essential, Signature, dan Grand Tour.
+4. **Bisa memesan sendiri** dengan mengisi data seperti nama lengkap, nomor HP yang aktif, rute dalam atau luar kota, tambahan jam, tujuan, titik penjemputan, dan catatan. Catatan ini bisa dipakai untuk meminta bantuan tambahan yang tidak ada di opsi tersebut, dan akan disampaikan ke sopir kami.
+5. **Bisa mengecek kembali pesanan.** Setelah memesan, pengguna ingin tahu informasi yang sudah dipilih di menu Booking, seperti harga paket, nama paket, titik penjemputan, tempat tujuan, nomor telepon, dan lain-lain, guna memastikan apakah sudah sesuai atau tidak.
 
 ### Kebutuhan ke Screen / Komponen
 | No | Kebutuhan | Screen | Komponen |
 |----|-----------|--------|----------|
-| 1 |  |  |  |
-| 2 |  |  |  |
-| 3 |  |  |  |
-| 4 |  |  |  |
-| 5 |  |  |  |
+| 1 | Desain UI elegan dan mudah dipakai | Semua layar (Login, Home, Detail, Booking, Status, Settings) | BrandHeader, GlassCard |
+| 2 | Harga yang jelas dan kompetitif | Home, Detail, Booking | PackageCard, PriceSummary |
+| 3 | Pilihan paket sesuai kebutuhan | Home, Detail | PackageCard |
+| 4 | Bisa memesan sendiri | Booking | BookingField, Picker |
+| 5 | Bisa mengecek kembali pesanan | Status | BrandHeader |
 
 ### Alasan Desain
-(Kenapa pilih warna, layout, urutan layar seperti sekarang?)
+Warna navy dan emas dipilih karena ingin tampil berbeda dibandingkan aplikasi atau web rental lain, dan sesuai dengan tema kami yang premium. Selain itu, warna ini dipilih karena menyejukkan dan membuat mata terasa nyaman saat memakainya.
+
+Tab di bagian bawah (Home, Booking, Status) dipakai sebagai shortcut untuk memudahkan pengguna langsung pindah ke menu utama, agar tidak ribet dan lebih intuitif.
 
 ### Rencana Pengembangan
-(Fitur apa yang mau ditambah nanti?)
+Ke depannya, Anterin akan menambah:
+1. **Kemitraan B2B untuk paket Signature**, agar paket Signature bisa merambah luas ke B2B dengan sistem kemitraan (hotel dan perusahaan), sehingga Anterin semakin maju dan lebih banyak yang memakainya.
+2. **Paket antar-jemput bandara dan stasiun**, karena klien atau tamu mayoritas berasal dari luar kota menggunakan pesawat atau kereta, misalnya untuk kepentingan rapat penting.
+3. **Paket sewa mingguan/bulanan untuk perusahaan**, sebagai paket baru setelah menjalankan sistem kemitraan.
+4. **Login dan registrasi asli yang terhubung ke server, beserta riwayat pesanan**, agar data pengguna aman. Saat ini data pesanan masih dicatat secara manual oleh admin dan direkap di Google Sheets, sehingga ke depannya akan dipindahkan ke database di server.
+5. **Pembayaran langsung di aplikasi**, sehingga pengguna cukup membuka aplikasi untuk membayar melalui transfer bank seperti BCA, Mandiri, BRI, dan lainnya.
 
 ## Video Demo
-Link: (diisi setelah upload)
+Link: https://drive.google.com/drive/folders/1uUn7avnlXCweThP9CRHVj-hFvmYJdktJ?usp=sharing
 
 ## Penggunaan AI
 Lihat [AI_USAGE.md](AI_USAGE.md).

@@ -34,7 +34,6 @@ const packages = [
     id: "grand-tour",
     name: "Anterin Grand Tour",
     image: require("../../assets/hero_zenix_transparent.png"),
-    label: "VVIP PRIORITY",
     label: "LONG TRIP",
     price: 1400000,
     description: "Partner perjalanan luar kota dengan driver yang paham medan.",
