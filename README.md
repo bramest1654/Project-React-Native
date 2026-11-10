@@ -12,7 +12,17 @@ Tema: Transportasi
 Anterin ini adalah sebuah aplikasi yang berjenis transportasi rental yang melayani atau ditujukan kepada konsumen VIP maupun konsumen umum dengan menggunakan armada Innova Zenix. Aplikasi Anterin ini mengedepankan pelayanan maksimal.
 
 ## Screenshot
-(diisi besok: Login, Register, Home, Detail, Booking, Status, Settings)
+| Login | Register | Home |
+|---|---|---|
+| ![Login](screenshots/login.png) | ![Register](screenshots/register.png) | ![Home](screenshots/home.png) |
+
+| Daftar Paket | Detail | Booking |
+|---|---|---|
+| ![Daftar Paket](screenshots/home-paket.png) | ![Detail](screenshots/detail.png) | ![Booking](screenshots/booking.png) |
+
+| Status | Pengaturan |
+|---|---|
+| ![Status](screenshots/status.png) | ![Pengaturan](screenshots/settings.png) |
 
 ## Cara Menjalankan
 1. `git clone https://github.com/bramest1654/Project-React-Native.git`
